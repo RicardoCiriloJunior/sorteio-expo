@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Totem - Stand</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    body.totem-body {
+      background: #0E0C23;
+      color: #FFFFFF;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 24px;
+      text-align: center;
+    }
+
+    .totem-card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 28px;
+      padding: 36px 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      max-width: 420px;
+      width: 100%;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45);
+    }
+
+    .totem-logo {
+      height: 58px;
+      max-width: 240px;
+      object-fit: contain;
+      margin-bottom: 16px;
+    }
+
+    #stand-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      letter-spacing: -0.02em;
+    }
+
+    .totem-subtitle {
+      font-size: 0.9rem;
+      color: #CBD5E1;
+      margin-bottom: 24px;
+    }
+
+    #qrcode {
+      background: #FFFFFF;
+      padding: 18px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 296px;
+      min-height: 296px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    #timer {
+      margin-top: 22px;
+      font-size: 0.9rem;
+      color: #94A3B8;
+    }
+
+    @media (min-width: 1024px) {
+      .totem-card {
+        max-width: 540px;
+        padding: 48px 44px;
+        border-radius: 36px;
+      }
+
+      .totem-logo {
+        height: 76px;
+        max-width: 300px;
+        margin-bottom: 22px;
+      }
+
+      #stand-title {
+        font-size: 2rem;
+      }
+
+      .totem-subtitle {
+        font-size: 1.05rem;
+        margin-bottom: 30px;
+      }
+
+      #qrcode {
+        padding: 24px;
+        min-width: 340px;
+        min-height: 340px;
+      }
+
+      #timer {
+        margin-top: 28px;
+        font-size: 1rem;
+      }
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body class="totem-body">
+  <div class="totem-card">
+    <img id="totem-logo" src="assets/ouros-logo.svg" alt="Logo Stand" class="totem-logo">
+    <h1 id="stand-title">Estande</h1>
+    <p class="totem-subtitle">Aponte a câmara do seu telemóvel para fazer check-in</p>
+    <div id="qrcode"></div>
+    <p id="timer">O código QR atualiza automaticamente a cada 5 minutos</p>
+  </div>
+
+  <script src="js/totem.js"></script>
+</body>
+</html>

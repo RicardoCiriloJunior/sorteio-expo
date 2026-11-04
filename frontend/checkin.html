@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Participe do Sorteio</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body id="theme-wrapper" class="theme-ouros">
+  <div class="mobile-container">
+    <!-- Cabeçalho em Onda Temático por Stand -->
+    <header class="header-stand">
+      <img id="stand-header-wave" src="assets/header-wave-ouros.svg" alt="" class="header-wave-bg">
+      
+      <div class="logo-stand-wrapper">
+        <img id="stand-logo" src="assets/ouros-logo.svg" alt="Stand Logo" class="logo-stand">
+        
+        <!-- Logo Composta Exclusiva para EcoCiente -->
+        <div class="ecociente-logo-composed" aria-label="EcoCiente">
+          <img src="assets/ecociente-logo-tree.svg" alt="" class="ecociente-tree">
+          <div class="ecociente-text-col">
+            <img src="assets/ecociente-logo-text.svg" alt="EcoCiente" class="ecociente-text">
+            <img src="assets/ecociente-logo-line.svg" alt="" class="ecociente-line">
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Conteúdo Central: Título, 4 Ícones e Formulário -->
+    <main class="checkin-main">
+      <h1 class="checkin-title">
+        Participe do
+        <span class="highlight">sorteio</span>
+      </h1>
+      <p class="checkin-subtitle">Passe pelos nossos 4 estandes e participe</p>
+
+      <!-- Ícones das 4 Marcas Expositoras -->
+      <div class="brands-bar" aria-label="Expositores participantes">
+        <img src="assets/icon-ouros.svg" alt="Ouros" class="brand-icon-ouros">
+        <img src="assets/icon-ceris.svg" alt="Ceris" class="brand-icon-ceris">
+        <img src="assets/icon-ecociente.svg" alt="EcoCiente" class="brand-icon-ecociente">
+        <img src="assets/icon-apollo.svg" alt="Apollo" class="brand-icon-apollo">
+      </div>
+
+      <!-- Formulário com Auto-preenchimento e Edição -->
+      <form id="form-checkin" class="form-box">
+        <div id="error-message" class="error-banner"></div>
+        <div id="session-message" class="success-banner"></div>
+
+        <div class="input-group">
+          <label for="input-nome">Nome</label>
+          <div class="input-wrapper">
+            <img src="assets/icon-user.png" alt="" class="input-icon">
+            <input type="text" id="input-nome" placeholder="Seu nome" autocomplete="name" required>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="input-telefone">Telefone</label>
+          <div class="input-wrapper">
+            <img src="assets/icon-phone.png" alt="" class="input-icon">
+            <input type="tel" id="input-telefone" placeholder="(11) 99999-9999" autocomplete="tel" maxlength="15" required>
+          </div>
+        </div>
+
+        <button type="submit" id="btn-submit" class="btn-continuar">Continuar</button>
+      </form>
+    </main>
+
+    <!-- Cenas de Mascotes e Ilustrações Inferiores (Fiel ao Figma por Stand) -->
+    <div class="mascote-scene">
+      <!-- Ouros (Ourecos) -->
+      <div class="scene-layer scene-ouros">
+        <img src="assets/ouros-wave-bottom-1.svg" alt="" class="ouros-wave-1">
+        <img src="assets/ouros-wave-bottom-2.svg" alt="" class="ouros-wave-2">
+        <img src="assets/ouros-linhas.svg" alt="" class="ouros-linhas">
+        <img id="stand-mascote" src="assets/ouros-mascote.svg" alt="Mascote Ourecos" class="ouros-mascote-img">
+      </div>
+
+      <!-- Ceris (Ceritecos) -->
+      <div class="scene-layer scene-ceris">
+        <img src="assets/ceris-bg-squares.svg" alt="" class="ceris-bg-squares">
+        <img src="assets/ceris-mascote.svg" alt="Mascote Ceritecos" class="ceris-mascote-img">
+      </div>
+
+      <!-- EcoCiente -->
+      <div class="scene-layer scene-ecociente">
+        <img src="assets/ecociente-leaves-1.png" alt="" class="ecociente-leaves-left">
+        <img src="assets/ecociente-leaves-1.png" alt="" class="ecociente-leaves-mid">
+        <img src="assets/ecociente-mascote.png" alt="Mascote EcoCiente" class="ecociente-mascote-img">
+      </div>
+
+      <!-- Apollo (Apollitos) -->
+      <div class="scene-layer scene-apollo">
+        <img src="assets/apollo-solar.png" alt="Painéis Solares Apollo" class="apollo-solar-img">
+      </div>
+    </div>
+  </div>
+
+  <script src="js/checkin.js"></script>
+</body>
+</html>

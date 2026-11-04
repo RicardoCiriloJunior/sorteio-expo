@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confira sua Participação</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="mobile-container">
+    <div>
+      <!-- Cabeçalho em Onda Multi-colorida (Figma) -->
+      <header class="status-header">
+        <img src="assets/header-wave-status.svg" alt="" class="status-wave-bg">
+        <h1>Confira sua participação</h1>
+        <p>Veja quais estandes você já passou</p>
+      </header>
+
+      <!-- Grelha 2x2 dos 4 Stands -->
+      <main id="stands-container" class="grid-stands">
+        <!-- Renderizado dinamicamente pelo JavaScript -->
+      </main>
+    </div>
+
+    <!-- Barra de Progresso Inferior (Figma Component) -->
+    <footer class="status-footer">
+      <div id="progress-pill" class="status-progress-pill">
+        <div id="progress-fill" class="status-progress-fill"></div>
+        <span id="label-status" class="status-progress-text">Status da Participação</span>
+      </div>
+    </footer>
+
+    <!-- Modal da Alexa (Disparado quando conclui 4/4) -->
+    <div id="modal-sucesso" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-content">
+        <!-- Faixa Superior com as 4 Logos -->
+        <div class="modal-top-bar">
+          <img src="assets/ouros-logo.svg" alt="Ouros">
+          <img src="assets/ceris-logo.svg" alt="Ceris">
+          <img src="assets/ecociente-logo-text.svg" alt="EcoCiente">
+          <img src="assets/apollo-logo.svg" alt="Apollo">
+        </div>
+
+        <button id="btn-close-modal" class="modal-close" aria-label="Fechar modal">
+          <img src="assets/modal-close.svg" alt="✕">
+        </button>
+
+        <div class="modal-header-text">
+          <h2 id="modal-title">Você concluiu os 4 stands !</h2>
+          <p>Agora você esta concorrendo o prêmio da alexa</p>
+        </div>
+
+        <img src="assets/alexa-echo.png" alt="Prêmio Alexa Echo" class="modal-prize-img">
+
+        <!-- Rodapé em Onda Multi-colorida no Modal -->
+        <div class="modal-footer-wave-box">
+          <img src="assets/modal-footer-wave.svg" alt="" class="modal-wave-bg">
+          <p class="modal-result-time">Resultado será divulgado às: <strong>18h30</strong></p>
+          <p class="modal-good-luck">Boa sorte !!!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/status.js"></script>
+</body>
+</html>
