@@ -1,0 +1,1113 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Poppins:wght@400;500;600;700&display=swap');
+
+:root {
+  --bg-page: #0E0C23;
+  --bg-mobile: #E9E9F5;
+  --text-dark: #171438;
+  --text-subtitle: #14112F;
+  --text-muted: #717171;
+  --white: #FFFFFF;
+  
+  /* Cores Temáticas dos Expositores */
+  --color-ouros-header: #171438;
+  --color-ouros-accent: #AD812C;
+  --color-ouros-btn: #171438;
+
+  --color-ceris-header: #4F2078;
+  --color-ceris-accent: #4F2078;
+  --color-ceris-btn: #4F2078;
+
+  --color-ecociente-header: #064E3B;
+  --color-ecociente-accent: #064E3B;
+  --color-ecociente-btn: #064E3B;
+
+  --color-apollo-header: #D34114;
+  --color-apollo-accent: #FE4910;
+  --color-apollo-btn: #D34114;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+body {
+  background-color: var(--bg-page);
+  color: var(--text-dark);
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+}
+
+.mobile-container {
+  width: 100%;
+  max-width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background-color: var(--bg-mobile);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ==========================================================================
+   1. ECRÃ DE CHECK-IN (TEMÁTICO POR STAND)
+   ========================================================================== */
+
+/* --- Cabeçalho em Onda (Figma Wave) --- */
+.header-stand {
+  position: relative;
+  width: 100%;
+  height: 205px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  flex-shrink: 0;
+}
+
+.header-wave-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.logo-stand-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 24px 22px;
+  width: 100%;
+}
+
+.logo-stand {
+  max-width: min(285px, 78vw);
+  max-height: 86px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+/* Ajuste específico para logo composta da EcoCiente */
+.ecociente-logo-composed {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding-bottom: 18px;
+}
+
+.theme-ecociente .ecociente-logo-composed {
+  display: flex;
+}
+
+.theme-ecociente #stand-logo {
+  display: none;
+}
+
+.ecociente-tree {
+  width: 92px;
+  height: 80px;
+  object-fit: contain;
+}
+
+.ecociente-text-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.ecociente-text {
+  width: 175px;
+  object-fit: contain;
+}
+
+.ecociente-line {
+  width: 177px;
+}
+
+/* --- Secção Central de Título e Ícones --- */
+.checkin-main {
+  position: relative;
+  z-index: 3;
+  padding: 6px 16px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+
+.checkin-title {
+  font-size: clamp(32px, 8.5vw, 40px);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.05em;
+  text-align: center;
+  color: var(--text-dark);
+  margin-bottom: 8px;
+}
+
+.checkin-title .highlight {
+  display: block;
+}
+
+.theme-ouros .checkin-title .highlight { color: var(--color-ouros-accent); }
+.theme-ceris .checkin-title .highlight { color: var(--color-ceris-accent); }
+.theme-ecociente .checkin-title .highlight { color: var(--color-ecociente-accent); }
+.theme-apollo .checkin-title .highlight { color: var(--color-apollo-accent); }
+
+.checkin-subtitle {
+  font-size: clamp(14px, 3.8vw, 16px);
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  color: var(--text-subtitle);
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+/* --- Barra dos 4 Ícones dos Expositores --- */
+.brands-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(20px, 7vw, 32px);
+  margin-bottom: 20px;
+}
+
+.brands-bar img {
+  object-fit: contain;
+  transition: transform 0.2s ease;
+}
+
+.brands-bar .brand-icon-ouros { width: 49px; height: 40px; }
+.brands-bar .brand-icon-ceris { width: 44px; height: 44px; }
+.brands-bar .brand-icon-ecociente { width: 55px; height: 46px; }
+.brands-bar .brand-icon-apollo { width: 31px; height: 54px; }
+
+/* --- Cartão de Formulário (Figma Card) --- */
+.form-box {
+  width: 100%;
+  max-width: 373px;
+  background-color: var(--white);
+  border: 0.5px solid rgba(0, 0, 0, 0.3);
+  border-radius: 20px;
+  padding: 22px 14px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  box-shadow: 0 4px 20px rgba(23, 20, 56, 0.04);
+}
+
+.error-banner {
+  display: none;
+  background-color: #FEF2F2;
+  border: 1px solid #F87171;
+  color: #B91C1C;
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 10px 12px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.success-banner {
+  display: none;
+  background-color: #F0FDF4;
+  border: 1px solid #4ADE80;
+  color: #15803D;
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 10px 12px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+/* Inputs com Label Flutuante na Borda (Estilo Figma) */
+.input-group {
+  position: relative;
+  padding-top: 10px;
+}
+
+.input-group label {
+  position: absolute;
+  top: 0;
+  left: 22px;
+  background-color: var(--white);
+  padding: 0 8px;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: -0.03em;
+  color: #000000;
+  z-index: 2;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 50px;
+  border: 1px solid #000000;
+  border-radius: 12px;
+  padding: 0 14px 0 40px;
+  background-color: var(--white);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.input-wrapper:focus-within {
+  border-width: 1.5px;
+  box-shadow: 0 0 0 3px rgba(23, 20, 56, 0.08);
+}
+
+.input-icon {
+  position: absolute;
+  left: 12px;
+  width: 19px;
+  height: 19px;
+  object-fit: contain;
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+.input-group input {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: transparent;
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  color: var(--text-dark);
+  outline: none;
+}
+
+.input-group input::placeholder {
+  color: var(--text-muted);
+}
+
+/* Botão Continuar */
+.btn-continuar {
+  width: 100%;
+  height: 50px;
+  border: none;
+  border-radius: 12px;
+  color: #F2F5F7;
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: -0.03em;
+  cursor: pointer;
+  margin-top: 4px;
+  transition: filter 0.2s, transform 0.1s;
+}
+
+.btn-continuar:hover {
+  filter: brightness(1.08);
+}
+
+.btn-continuar:active {
+  transform: scale(0.99);
+}
+
+.btn-continuar:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.theme-ouros .btn-continuar { background-color: var(--color-ouros-btn); }
+.theme-ceris .btn-continuar { background-color: var(--color-ceris-btn); }
+.theme-ecociente .btn-continuar { background-color: var(--color-ecociente-btn); }
+.theme-apollo .btn-continuar { background-color: var(--color-apollo-btn); }
+
+/* --- Rodapé de Mascotes e Ilustrações por Stand --- */
+.mascote-scene {
+  position: relative;
+  width: 100%;
+  height: 185px;
+  margin-top: auto;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.scene-layer {
+  display: none;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.theme-ouros .scene-ouros,
+.theme-ceris .scene-ceris,
+.theme-ecociente .scene-ecociente,
+.theme-apollo .scene-apollo {
+  display: block;
+}
+
+/* Cena Ouros (Ourecos) */
+.ouros-wave-1 {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 115px;
+  object-fit: fill;
+}
+
+.ouros-wave-2 {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 62%;
+  height: 67px;
+  object-fit: fill;
+}
+
+.ouros-linhas {
+  position: absolute;
+  bottom: 132px;
+  right: 164px;
+  width: 33px;
+}
+
+.ouros-mascote-img {
+  position: absolute;
+  bottom: 12px;
+  right: 20px;
+  width: 138px;
+  height: 144px;
+  object-fit: contain;
+}
+
+/* Cena Ceris (Ceritecos) */
+.ceris-bg-squares {
+  position: absolute;
+  bottom: -20px;
+  left: -10px;
+  width: 105%;
+  max-height: 220px;
+  object-fit: cover;
+  opacity: 0.9;
+}
+
+.ceris-mascote-img {
+  position: absolute;
+  bottom: 0;
+  right: 8px;
+  width: 148px;
+  height: 178px;
+  object-fit: contain;
+}
+
+/* Cena EcoCiente */
+.ecociente-leaves-left {
+  position: absolute;
+  bottom: -35px;
+  left: -75px;
+  width: 220px;
+  object-fit: contain;
+}
+
+.ecociente-leaves-mid {
+  position: absolute;
+  bottom: -45px;
+  left: 20px;
+  width: 175px;
+  object-fit: contain;
+}
+
+.ecociente-mascote-img {
+  position: absolute;
+  bottom: -12px;
+  right: -8px;
+  width: 390px;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+/* Cena Apollo (Apollitos) */
+.apollo-solar-img {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  object-position: center bottom;
+}
+
+
+/* ==========================================================================
+   2. ECRÃ DE PROGRESSO / STATUS ("Confira sua participação")
+   ========================================================================== */
+
+.status-header {
+  position: relative;
+  width: 100%;
+  height: clamp(190px, 25vh, 235px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 24px 30px;
+  text-align: center;
+  color: var(--white);
+  z-index: 2;
+  flex-shrink: 0;
+}
+
+.status-wave-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.status-header h1 {
+  font-size: clamp(28px, 7.5vw, 38px);
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  max-width: 310px;
+}
+
+.status-header p {
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(14px, 3.8vw, 16px);
+  font-weight: 400;
+  margin-top: 10px;
+  opacity: 0.95;
+}
+
+/* Grelha 2x2 dos Stands */
+.grid-stands {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(132px, 150px));
+  justify-content: center;
+  gap: clamp(14px, 3.5vw, 20px);
+  padding: 8px 16px 14px;
+  z-index: 3;
+}
+
+/* Cartão Individual do Stand no Figma */
+.stand-card {
+  position: relative;
+  width: 100%;
+  height: 214px;
+  border-radius: 18px;
+  cursor: default;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Faixa colorida superior (tab) */
+.stand-card-top-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 204px;
+  border-radius: 18px;
+}
+
+.stand-card.stand-ouros .stand-card-top-bar { background-color: #171438; }
+.stand-card.stand-ceris .stand-card-top-bar { background-color: #4F2078; }
+.stand-card.stand-ecociente .stand-card-top-bar { background-color: #064E3B; }
+.stand-card.stand-apollo .stand-card-top-bar { background-color: #D34114; }
+
+/* Corpo branco do cartão deslocado 10px para baixo */
+.stand-card-body {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  width: 100%;
+  height: 204px;
+  background-color: var(--white);
+  border: 0.5px solid rgba(0, 0, 0, 0.3);
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 12px 16px;
+}
+
+.stand-card-brand {
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stand-card-brand img {
+  max-width: 106px;
+  max-height: 34px;
+  object-fit: contain;
+}
+
+.stand-card-brand-text-ceris {
+  font-family: 'Nunito', sans-serif;
+  font-size: 34px;
+  font-weight: 600;
+  color: #322340;
+  line-height: 1;
+}
+
+.stand-card-emblem {
+  width: 78px;
+  height: 78px;
+  object-fit: contain;
+  margin: 4px 0;
+}
+
+/* Caixa tracejada (Não visitado) vs Verde "Visitado" */
+.stand-card-check {
+  width: 88.3px;
+  height: 50.6px;
+  border-radius: 9px;
+  background-color: rgba(242, 240, 240, 0.96);
+  border: 1px dashed #000000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 500;
+  color: transparent;
+  transition: all 0.25s ease;
+}
+
+.stand-card.visited .stand-card-check {
+  border: none;
+  background-color: rgba(22, 126, 44, 0.96);
+  color: var(--white);
+}
+
+/* Barra de Progresso Inferior (Status da Participação) */
+.status-footer {
+  padding: 10px 20px 30px;
+  display: flex;
+  justify-content: center;
+  z-index: 3;
+}
+
+.status-progress-pill {
+  position: relative;
+  width: 100%;
+  max-width: 324px;
+  height: 56px;
+  background-color: var(--white);
+  border: 0.5px solid rgba(0, 0, 0, 0.3);
+  border-radius: 20px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.status-progress-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0%;
+  background-color: #0E0C23;
+  border-radius: 20px;
+  transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  z-index: 1;
+}
+
+.status-progress-text {
+  position: relative;
+  z-index: 2;
+  font-size: 15px;
+  font-weight: 600;
+  color: #717171;
+  transition: color 0.3s ease;
+}
+
+.status-progress-pill.progress-half .status-progress-text,
+.status-progress-pill.progress-three .status-progress-text {
+  mix-blend-mode: difference;
+  color: #FFFFFF;
+}
+
+.status-progress-pill.progress-complete .status-progress-text {
+  color: #FFFFFF;
+  font-weight: 700;
+}
+
+
+/* ==========================================================================
+   3. MODAL POP-UP DA ALEXA (4/4 CONCLUÍDOS)
+   ========================================================================== */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(14, 12, 35, 0.78);
+  backdrop-filter: blur(3px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 100;
+}
+
+.modal-content {
+  position: relative;
+  width: 100%;
+  max-width: 312px;
+  height: 462px;
+  background: var(--white);
+  border-radius: 18px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+  animation: modalPop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalPop {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Barra superior com as 4 logos no Modal */
+.modal-top-bar {
+  width: 100%;
+  height: 36px;
+  background-color: #0E0C23;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+}
+
+.modal-top-bar img {
+  height: 17px;
+  object-fit: contain;
+}
+
+.modal-close {
+  position: absolute;
+  top: 46px;
+  right: 16px;
+  background: none;
+  border: none;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 5;
+}
+
+.modal-close img {
+  width: 14px;
+  height: 14px;
+}
+
+.modal-header-text {
+  margin-top: 16px;
+  width: 215px;
+  text-align: center;
+}
+
+.modal-header-text h2 {
+  font-size: 26.5px;
+  font-weight: 700;
+  line-height: 30px;
+  color: #0E0C23;
+}
+
+.modal-header-text p {
+  font-family: 'Nunito', sans-serif;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #0E0C23;
+  margin-top: 10px;
+  line-height: 1.3;
+}
+
+.modal-prize-img {
+  width: 164px;
+  height: 164px;
+  object-fit: contain;
+  margin-top: 16px;
+  z-index: 2;
+}
+
+/* Rodapé em onda do Modal */
+.modal-footer-wave-box {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 144px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0 22px 22px;
+  color: var(--white);
+  z-index: 3;
+}
+
+.modal-wave-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.modal-result-time {
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 22px;
+  max-width: 225px;
+}
+
+.modal-result-time strong {
+  font-weight: 700;
+}
+
+.modal-good-luck {
+  font-family: 'Nunito', sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  margin-top: 8px;
+}
+
+
+/* ==========================================================================
+   4. RESPONSIVIDADE AVANÇADA (TABLET, PORTÁTIL E MONITOR DESKTOP)
+   ========================================================================== */
+
+/* --- Tablet e Ecrãs Médios (540px a 959px) --- */
+@media (min-width: 540px) {
+  body {
+    align-items: center;
+    padding: 24px 16px;
+    background: radial-gradient(circle at 50% 20%, #1E1A4A 0%, #0E0C23 75%);
+  }
+
+  .mobile-container {
+    max-width: 560px;
+    min-height: auto;
+    border-radius: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.6);
+  }
+
+  .header-stand {
+    height: 215px;
+  }
+
+  .checkin-main {
+    padding: 16px 32px 12px;
+  }
+
+  .form-box {
+    max-width: 430px;
+    padding: 26px 24px 22px;
+  }
+
+  .grid-stands {
+    grid-template-columns: repeat(2, 176px);
+    gap: 24px;
+    padding: 18px 28px;
+  }
+
+  .stand-card {
+    height: 238px;
+  }
+
+  .stand-card-top-bar,
+  .stand-card-body {
+    height: 227px;
+  }
+
+  .stand-card:hover {
+    transform: translateY(-4px);
+  }
+
+  .status-progress-pill {
+    max-width: 380px;
+    height: 60px;
+  }
+
+  /* Modal ampliado */
+  .modal-content {
+    max-width: 356px;
+    height: 500px;
+    border-radius: 22px;
+  }
+
+  .modal-top-bar {
+    height: 42px;
+    padding: 0 16px;
+  }
+
+  .modal-top-bar img {
+    height: 19px;
+  }
+
+  .modal-header-text {
+    margin-top: 20px;
+    width: 250px;
+  }
+
+  .modal-header-text h2 {
+    font-size: 28px;
+    line-height: 32px;
+  }
+
+  .modal-header-text p {
+    font-size: 13px;
+  }
+
+  .modal-prize-img {
+    width: 180px;
+    height: 180px;
+  }
+
+  .modal-footer-wave-box {
+    height: 156px;
+    padding: 0 26px 24px;
+  }
+}
+
+/* --- Computador / Portátil e Desktop (960px ou superior) --- */
+@media (min-width: 960px) {
+  body {
+    padding: 20px 32px;
+  }
+
+  .mobile-container {
+    max-width: 1020px;
+    min-height: 580px;
+    border-radius: 32px;
+  }
+
+  /* ------------------------------------------------------------------------
+     1. Layout Desktop para Check-in (2 Colunas: Arte Figma à esq, Form à dir)
+     ------------------------------------------------------------------------ */
+  #theme-wrapper .mobile-container {
+    display: grid;
+    grid-template-columns: 410px 1fr;
+    grid-template-rows: auto 1fr;
+    align-items: stretch;
+  }
+
+  /* Coluna Esquerda Topo: Onda Original do Figma + Logo do Estande */
+  #theme-wrapper .header-stand {
+    grid-column: 1;
+    grid-row: 1;
+    height: 215px;
+    border-right: 1px solid rgba(23, 20, 56, 0.08);
+  }
+
+  /* Coluna Esquerda Base: Mascote e Ilustração no fundo #E9E9F5 original */
+  #theme-wrapper .mascote-scene {
+    grid-column: 1;
+    grid-row: 2;
+    height: 100%;
+    min-height: 365px;
+    margin-top: 0;
+    border-right: 1px solid rgba(23, 20, 56, 0.08);
+  }
+
+  /* Ajustes das 4 cenas na coluna esquerda do PC */
+  .ouros-wave-1 {
+    height: 130px;
+  }
+
+  .ouros-wave-2 {
+    height: 76px;
+  }
+
+  .ouros-mascote-img {
+    width: 185px;
+    height: 194px;
+    right: 50%;
+    transform: translateX(50%);
+    bottom: 24px;
+  }
+
+  .ouros-linhas {
+    width: 40px;
+    bottom: 200px;
+    right: calc(50% + 75px);
+  }
+
+  .ceris-bg-squares {
+    width: 110%;
+    max-height: 310px;
+    bottom: -10px;
+  }
+
+  .ceris-mascote-img {
+    width: 195px;
+    height: 235px;
+    right: 50%;
+    transform: translateX(50%);
+    bottom: 0;
+  }
+
+  .ecociente-mascote-img {
+    width: 410px;
+    right: 0;
+    bottom: -10px;
+  }
+
+  .apollo-solar-img {
+    height: 190px;
+  }
+
+  /* Coluna Direita no PC: Título, 4 Ícones e Cartão do Formulário */
+  #theme-wrapper .checkin-main {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    justify-content: center;
+    padding: 36px 48px;
+    background-color: #F4F4FA;
+  }
+
+  .checkin-title {
+    font-size: 42px;
+    margin-bottom: 10px;
+  }
+
+  .checkin-title .highlight {
+    display: inline;
+  }
+
+  .checkin-subtitle {
+    font-size: 16px;
+    margin-bottom: 22px;
+  }
+
+  .brands-bar {
+    gap: 38px;
+    margin-bottom: 24px;
+  }
+
+  .brands-bar img:hover {
+    transform: scale(1.1);
+  }
+
+  .form-box {
+    max-width: 450px;
+    padding: 30px 28px 26px;
+    border-radius: 22px;
+    box-shadow: 0 12px 34px rgba(23, 20, 56, 0.07);
+  }
+
+  .input-group label {
+    background-color: var(--white);
+  }
+
+  .input-wrapper {
+    height: 52px;
+  }
+
+  .btn-continuar {
+    height: 52px;
+    font-size: 16px;
+  }
+
+  /* ------------------------------------------------------------------------
+     2. Layout Desktop para Status (Cabeçalho 100% + 4 Cartões Lado a Lado)
+     ------------------------------------------------------------------------ */
+  .status-header {
+    height: 185px;
+    padding: 18px 40px 30px;
+  }
+
+  .status-header h1 {
+    font-size: 38px;
+    max-width: 620px;
+    line-height: 1.15;
+  }
+
+  .status-header p {
+    font-size: 17px;
+    margin-top: 8px;
+  }
+
+  .grid-stands {
+    grid-template-columns: repeat(4, minmax(175px, 198px));
+    gap: 24px;
+    padding: 20px 36px;
+  }
+
+  .stand-card {
+    height: 248px;
+  }
+
+  .stand-card-top-bar,
+  .stand-card-body {
+    height: 236px;
+  }
+
+  .stand-card-body {
+    padding: 18px 14px 20px;
+  }
+
+  .stand-card-emblem {
+    width: 86px;
+    height: 86px;
+  }
+
+  .stand-card-check {
+    width: 104px;
+    height: 50px;
+    font-size: 15px;
+  }
+
+  .status-footer {
+    padding: 10px 40px 30px;
+  }
+
+  .status-progress-pill {
+    max-width: 440px;
+    height: 60px;
+  }
+
+  .status-progress-text {
+    font-size: 16px;
+  }
+}
+
+/* --- Monitores Grandes Full HD / Ultrawide (1280px+) --- */
+@media (min-width: 1280px) {
+  .mobile-container {
+    max-width: 1080px;
+  }
+
+  #theme-wrapper .mobile-container {
+    grid-template-columns: 440px 1fr;
+  }
+}

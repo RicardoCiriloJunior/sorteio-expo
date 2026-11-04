@@ -1,0 +1,125 @@
+const API_BASE_URL = "http://localhost:8000/api/v1";
+
+const STAND_CONFIGS = {
+  ouros: {
+    logo: "assets/ouros-logo.svg",
+    wave: "assets/header-wave-ouros.svg",
+    mascote: "assets/ouros-mascote.svg",
+    class: "theme-ouros"
+  },
+  ceris: {
+    logo: "assets/ceris-logo.svg",
+    wave: "assets/header-wave-ceris.svg",
+    mascote: "assets/ceris-mascote.svg",
+    class: "theme-ceris"
+  },
+  ecociente: {
+    logo: "assets/ecociente-logo-text.svg",
+    wave: "assets/header-wave-ecociente.svg",
+    mascote: "assets/ecociente-mascote.png",
+    class: "theme-ecociente"
+  },
+  apollo: {
+    logo: "assets/apollo-logo.svg",
+    wave: "assets/header-wave-apollo.svg",
+    mascote: "assets/apollo-solar.png",
+    class: "theme-apollo"
+  }
+};
+
+function formatarTelefone(valor) {
+  const digitos = valor.replace(/\D/g, "").slice(0, 11);
+  if (digitos.length === 0) return "";
+  if (digitos.length <= 2) return `(${digitos}`;
+  if (digitos.length <= 6) return `(${digitos.slice(0, 2)}) ${digitos.slice(2)}`;
+  if (digitos.length <= 10) {
+    return `(${digitos.slice(0, 2)}) ${digitos.slice(2, 6)}-${digitos.slice(6)}`;
+  }
+  return `(${digitos.slice(0, 2)}) ${digitos.slice(2, 7)}-${digitos.slice(7)}`;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const rawStand = (urlParams.get("stand") || "ouros").toLowerCase();
+  const standSlug = rawStand === "eco" ? "ecociente" : rawStand;
+  const token = urlParams.get("token") || "";
+
+  // 1. Aplica o tema visual conforme o stand lido
+  const config = STAND_CONFIGS[standSlug] || STAND_CONFIGS.ouros;
+  document.getElementById("theme-wrapper").className = config.class;
+  document.getElementById("stand-logo").src = config.logo;
+  
+  const waveEl = document.getElementById("stand-header-wave");
+  if (waveEl) waveEl.src = config.wave;
+
+  const mascoteEl = document.getElementById("stand-mascote");
+  if (mascoteEl && standSlug === "ouros") mascoteEl.src = config.mascote;
+
+  // Máscara em tempo real para o campo de telefone
+  const inputTelefone = document.getElementById("input-telefone");
+  inputTelefone.addEventListener("input", (e) => {
+    e.target.value = formatarTelefone(e.target.value);
+  });
+
+  // 2. Auto-preenche os inputs se houver dados guardados na sessão
+  const salvoNome = localStorage.getItem("participante_nome");
+  const salvoTelefone = localStorage.getItem("participante_telefone");
+  const sessionBanner = document.getElementById("session-message");
+
+  if (salvoNome) document.getElementById("input-nome").value = salvoNome;
+  if (salvoTelefone) inputTelefone.value = salvoTelefone;
+
+  if (salvoNome && salvoTelefone && sessionBanner) {
+    sessionBanner.innerText = "Dados recuperados! Confirme ou edite para validar o estande.";
+    sessionBanner.style.display = "block";
+  }
+
+  // 3. Submissão do formulário
+  const form = document.getElementById("form-checkin");
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const btnSubmit = document.getElementById("btn-submit");
+    const errorBox = document.getElementById("error-message");
+
+    const nome = document.getElementById("input-nome").value.trim();
+    const telefone = inputTelefone.value.trim();
+    const participanteId = localStorage.getItem("participante_id");
+
+    btnSubmit.disabled = true;
+    btnSubmit.innerText = "A validar...";
+    errorBox.style.display = "none";
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/checkin`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          participante_id: participanteId || null,
+          nome: nome,
+          telefone: telefone,
+          stand_slug: standSlug,
+          token: token
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.detail || "Erro ao registar presença.");
+      }
+
+      // Atualiza o localStorage com os dados confirmados/editados
+      localStorage.setItem("participante_id", data.participante.id);
+      localStorage.setItem("participante_nome", data.participante.nome);
+      localStorage.setItem("participante_telefone", data.participante.telefone);
+
+      // Redireciona para o ecrã de progresso
+      window.location.href = `status.html?id=${data.participante.id}`;
+    } catch (err) {
+      errorBox.innerText = err.message;
+      errorBox.style.display = "block";
+      btnSubmit.disabled = false;
+      btnSubmit.innerText = "Continuar";
+    }
+  });
+});
