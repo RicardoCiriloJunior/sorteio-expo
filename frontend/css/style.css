@@ -1111,3 +1111,742 @@ body {
     grid-template-columns: 440px 1fr;
   }
 }
+
+
+/* ==========================================================================
+   5. ECRÃ DO TOTEM / GERADOR DE QR CODE E TOKENS (PERSONALIZADO POR STAND)
+   ========================================================================== */
+
+.totem-view-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.brands-bar.totem-brands-bar img {
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 12px;
+  transition: transform 0.2s ease, opacity 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.brands-bar.totem-brands-bar img:hover {
+  transform: translateY(-2px) scale(1.06);
+  background-color: rgba(255, 255, 255, 0.55);
+}
+
+.brands-bar.totem-brands-bar img.brand-active {
+  background-color: var(--white);
+  box-shadow: 0 4px 12px rgba(23, 20, 56, 0.12);
+  transform: scale(1.08);
+}
+
+.brands-bar.totem-brands-active img {
+  opacity: 0.42;
+  padding: 6px;
+  border-radius: 12px;
+  transition: all 0.25s ease;
+}
+
+.brands-bar.totem-brands-active img.brand-active {
+  opacity: 1;
+  background-color: var(--white);
+  box-shadow: 0 6px 16px rgba(23, 20, 56, 0.14);
+  transform: scale(1.1);
+}
+
+.input-wrapper.totem-pin-wrapper {
+  padding-right: 44px;
+}
+
+.input-icon-svg {
+  position: absolute;
+  left: 12px;
+  width: 19px;
+  height: 19px;
+  color: var(--text-dark);
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+.btn-toggle-eye {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.btn-toggle-eye:hover {
+  background-color: rgba(23, 20, 56, 0.06);
+  color: var(--text-dark);
+}
+
+.totem-hint-text {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.4;
+  margin-top: -2px;
+}
+
+/* --- Cartão do QR Code / Token Personalizado --- */
+.totem-qr-card {
+  align-items: center;
+  padding: 18px 18px 16px;
+  gap: 12px;
+}
+
+.totem-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 14px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  background-color: #F4F4FA;
+  border: 1px solid rgba(23, 20, 56, 0.12);
+  color: var(--text-dark);
+}
+
+.totem-badge-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10B981;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.8);
+  animation: pulseDot 2s infinite;
+}
+
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.55; transform: scale(0.88); }
+}
+
+.qrcode-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#qrcode {
+  background: var(--white);
+  padding: 12px;
+  border-radius: 16px;
+  border: 2px solid rgba(23, 20, 56, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: min(215px, calc(100vw - 96px));
+  aspect-ratio: 1 / 1;
+  box-shadow: 0 8px 24px rgba(23, 20, 56, 0.08);
+  overflow: hidden;
+  transition: border-color 0.3s ease;
+}
+
+.theme-ouros #qrcode { border-color: rgba(173, 129, 44, 0.45); }
+.theme-ceris #qrcode { border-color: rgba(79, 32, 120, 0.4); }
+.theme-ecociente #qrcode { border-color: rgba(6, 78, 59, 0.4); }
+.theme-apollo #qrcode { border-color: rgba(211, 65, 20, 0.45); }
+
+#qrcode canvas {
+  display: none !important;
+}
+
+#qrcode img {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: contain !important;
+  display: block !important;
+  margin: 0 auto !important;
+}
+
+.totem-timer-box {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.totem-timer-bar {
+  width: 100%;
+  height: 6px;
+  background-color: #E9E9F5;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.totem-timer-fill {
+  height: 100%;
+  width: 100%;
+  border-radius: 999px;
+  transition: width 1s linear, background-color 0.3s ease;
+}
+
+.theme-ouros .totem-timer-fill { background-color: var(--color-ouros-accent); }
+.theme-ceris .totem-timer-fill { background-color: var(--color-ceris-btn); }
+.theme-ecociente .totem-timer-fill { background-color: var(--color-ecociente-btn); }
+.theme-apollo .totem-timer-fill { background-color: var(--color-apollo-btn); }
+
+.totem-countdown {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.totem-actions {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  margin-top: 2px;
+}
+
+.btn-totem-action {
+  flex: 1;
+  height: 42px;
+  border-radius: 10px;
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  cursor: pointer;
+  transition: filter 0.2s, transform 0.1s, background-color 0.2s;
+}
+
+.btn-totem-action:active {
+  transform: scale(0.98);
+}
+
+.btn-totem-primary {
+  border: none;
+  color: var(--white);
+}
+
+.theme-ouros .btn-totem-primary { background-color: var(--color-ouros-btn); }
+.theme-ceris .btn-totem-primary { background-color: var(--color-ceris-btn); }
+.theme-ecociente .btn-totem-primary { background-color: var(--color-ecociente-btn); }
+.theme-apollo .btn-totem-primary { background-color: var(--color-apollo-btn); }
+
+.btn-totem-outline {
+  background-color: transparent;
+  border: 1px solid rgba(23, 20, 56, 0.25);
+  color: var(--text-dark);
+}
+
+.btn-totem-outline:hover {
+  background-color: rgba(23, 20, 56, 0.05);
+}
+
+@media (min-width: 960px) {
+  .totem-qr-card {
+    padding: 22px 26px 20px;
+    gap: 14px;
+  }
+
+  #qrcode {
+    max-width: 235px;
+    padding: 14px;
+  }
+}
+
+
+/* ==========================================================================
+   6. PAINEL ADMINISTRATIVO DE SORTEIO (admin.html)
+   ========================================================================== */
+
+.admin-stands-bar {
+  gap: clamp(14px, 4.5vw, 24px);
+  margin-bottom: 16px;
+}
+
+.admin-stand-pill {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(23, 20, 56, 0.08);
+  border-radius: 14px;
+  padding: 8px 10px 6px;
+  min-width: 68px;
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.admin-stand-pill:hover {
+  transform: translateY(-2px);
+  background: var(--white);
+}
+
+.admin-stand-pill.brand-active {
+  background: var(--white);
+  box-shadow: 0 4px 12px rgba(23, 20, 56, 0.12);
+}
+
+.admin-stand-pill img {
+  height: 30px !important;
+  width: auto !important;
+  object-fit: contain;
+}
+
+.admin-stand-count {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-dark);
+  background: #E9E9F5;
+  padding: 1px 8px;
+  border-radius: 999px;
+}
+
+.admin-raffle-card {
+  max-width: 420px;
+  padding: 18px 16px 16px;
+  gap: 12px;
+}
+
+.admin-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  width: 100%;
+}
+
+.admin-stat-box {
+  background: #F4F4FA;
+  border: 1px solid rgba(23, 20, 56, 0.08);
+  border-radius: 12px;
+  padding: 8px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.admin-stat-box.stat-highlight {
+  background: rgba(22, 126, 44, 0.1);
+  border-color: rgba(22, 126, 44, 0.35);
+}
+
+.admin-stat-value {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--text-dark);
+}
+
+.admin-stat-box.stat-highlight .admin-stat-value {
+  color: #15803D;
+}
+
+.admin-stat-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* Palco do Sorteio (Idle / Rolling / Ganhador) */
+.admin-stage-box {
+  width: 100%;
+  min-height: 165px;
+  background: linear-gradient(180deg, #F8F8FC 0%, #EFEFF8 100%);
+  border: 1.5px dashed rgba(23, 20, 56, 0.2);
+  border-radius: 16px;
+  padding: 14px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.admin-stage-box.is-rolling {
+  border-style: solid;
+  border-color: var(--color-ouros-accent);
+  background: linear-gradient(135deg, #171438 0%, #2B2463 100%);
+  color: var(--white);
+}
+
+.admin-stage-box.has-winner {
+  border-style: solid;
+  border-width: 2px;
+  border-color: #16A34A;
+  background: linear-gradient(180deg, #F0FDF4 0%, #DCFCE7 100%);
+}
+
+.stage-view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 6px;
+}
+
+.stage-prize-img {
+  width: 82px;
+  height: 82px;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.15));
+}
+
+.stage-prize-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.stage-prize-sub {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* Animação de Roleta */
+.rolling-badge {
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #FCD34D;
+  background: rgba(252, 211, 77, 0.16);
+  padding: 4px 12px;
+  border-radius: 999px;
+}
+
+.rolling-name {
+  font-size: clamp(20px, 5vw, 25px);
+  font-weight: 700;
+  color: var(--white);
+  margin-top: 6px;
+  line-height: 1.2;
+  word-break: break-word;
+}
+
+.rolling-phone {
+  font-size: 13.5px;
+  color: #CBD5E1;
+  font-family: monospace;
+}
+
+/* Exibição do Ganhador no Card */
+.winner-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #16A34A;
+  color: var(--white);
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 4px 12px;
+  border-radius: 999px;
+}
+
+.winner-name {
+  font-size: clamp(20px, 5.5vw, 24px);
+  font-weight: 700;
+  color: #0E0C23;
+  line-height: 1.2;
+  margin-top: 4px;
+  word-break: break-word;
+}
+
+.winner-phone-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.winner-phone {
+  font-size: 15px;
+  font-weight: 600;
+  color: #15803D;
+}
+
+.btn-mini-toggle {
+  background: rgba(22, 126, 44, 0.14);
+  border: 1px solid rgba(22, 126, 44, 0.3);
+  color: #15803D;
+  border-radius: 6px;
+  padding: 2px 7px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.winner-id-tag {
+  font-size: 10.5px;
+  color: #64748B;
+  margin-top: 2px;
+}
+
+/* Gaveta de Participantes Aptos */
+.aptos-drawer {
+  width: 100%;
+  max-height: 150px;
+  overflow-y: auto;
+  background: #F8FAFC;
+  border: 1px solid rgba(23, 20, 56, 0.12);
+  border-radius: 12px;
+  padding: 8px 10px;
+  text-align: left;
+}
+
+.aptos-drawer-title {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.aptos-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.aptos-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12.5px;
+  padding: 5px 8px;
+  background: var(--white);
+  border-radius: 8px;
+  border: 1px solid rgba(23, 20, 56, 0.06);
+}
+
+.aptos-list li strong {
+  color: var(--text-dark);
+  font-weight: 600;
+}
+
+.aptos-list li span {
+  color: var(--text-muted);
+  font-size: 11.5px;
+}
+
+/* Destaque do Ganhador no Modal Alexa */
+.modal-winner-box {
+  background: #F4F4FA;
+  border: 1.5px solid rgba(22, 163, 74, 0.4);
+  border-radius: 12px;
+  padding: 8px 14px;
+  margin-top: 8px;
+  width: 88%;
+  text-align: center;
+  z-index: 4;
+}
+
+.modal-winner-name {
+  font-size: 17px;
+  font-weight: 700;
+  color: #0E0C23;
+  line-height: 1.2;
+  word-break: break-word;
+}
+
+.modal-winner-phone {
+  font-size: 13px;
+  font-weight: 600;
+  color: #15803D;
+  margin-top: 2px;
+}
+
+@media (min-width: 960px) {
+  .admin-raffle-card {
+    max-width: 470px;
+    padding: 22px 24px 20px;
+  }
+}
+
+
+/* --- Ajustes da Tela Admin Genérica (Multimarcas / Sem Estande Único) --- */
+.admin-header {
+  height: clamp(180px, 22vh, 210px);
+  padding: 16px 20px 34px;
+}
+
+.admin-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 16px 24px;
+  z-index: 3;
+}
+
+.admin-brands-neutral {
+  margin-bottom: 18px;
+}
+
+.admin-form-box {
+  max-width: 420px;
+}
+
+.admin-card-header {
+  text-align: center;
+  margin-bottom: 2px;
+}
+
+.admin-card-header h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-dark);
+  letter-spacing: -0.02em;
+}
+
+.admin-card-header p {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 3px;
+}
+
+.btn-admin-neutral {
+  background-color: #0E0C23;
+}
+
+.btn-admin-neutral:hover {
+  background-color: #1B1742;
+}
+
+/* Grelha dos 4 Estandes no Admin alinhada exatamente com o cartão abaixo */
+.admin-stands-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  width: 100%;
+  max-width: 420px;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+
+.admin-stand-mini {
+  position: relative;
+  height: 106px;
+  border-radius: 16px;
+}
+
+.admin-stand-mini-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 98px;
+  border-radius: 16px;
+}
+
+.admin-stand-mini.stand-ouros .admin-stand-mini-bar { background-color: #AD812C; }
+.admin-stand-mini.stand-ceris .admin-stand-mini-bar { background-color: #4F2078; }
+.admin-stand-mini.stand-ecociente .admin-stand-mini-bar { background-color: #064E3B; }
+.admin-stand-mini.stand-apollo .admin-stand-mini-bar { background-color: #D34114; }
+
+.admin-stand-mini-body {
+  position: absolute;
+  top: 8px;
+  left: 0;
+  width: 100%;
+  height: 98px;
+  background-color: var(--white);
+  border: 0.5px solid rgba(0, 0, 0, 0.22);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 6px 9px;
+  box-shadow: 0 4px 14px rgba(23, 20, 56, 0.04);
+}
+
+.admin-stand-mini-body img {
+  height: 30px;
+  width: auto;
+  object-fit: contain;
+}
+
+.admin-stand-mini-name {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--text-dark);
+  line-height: 1;
+}
+
+.admin-raffle-card .totem-actions {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+#modal-ganhador .modal-content {
+  height: auto;
+  min-height: 470px;
+  padding-bottom: 155px;
+}
+
+@media (min-width: 540px) {
+  .admin-stands-grid,
+  .admin-raffle-card,
+  .admin-form-box {
+    max-width: 480px;
+  }
+
+  .admin-raffle-card .totem-actions {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+}
+
+@media (min-width: 960px) {
+  .admin-container {
+    max-width: 780px;
+    min-height: auto;
+  }
+
+  .admin-header {
+    height: 185px;
+  }
+
+  .admin-stands-grid {
+    max-width: 560px;
+    gap: 14px;
+  }
+
+  .admin-raffle-card {
+    max-width: 560px;
+    padding: 22px 24px 20px;
+  }
+}
+
+.header-wave-bg,
+.status-wave-bg {
+  top: -2px;
+  left: -2px;
+  width: calc(100% + 4px);
+  height: calc(100% + 2px);
+}

@@ -1,4 +1,14 @@
-const API_BASE_URL = "http://localhost:6767/api/v1";
+function getApiBaseUrl() {
+  if (window.location.port === "6767") {
+    return `${window.location.origin}/api/v1`;
+  }
+  if (window.location.hostname && window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1") {
+    return `http://${window.location.hostname}:6767/api/v1`;
+  }
+  return "http://localhost:6767/api/v1";
+}
+
+const API_BASE_URL = getApiBaseUrl();
 
 const STAND_CONFIGS = {
   ouros: {
@@ -46,9 +56,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // 1. Aplica o tema visual conforme o stand lido
   const config = STAND_CONFIGS[standSlug] || STAND_CONFIGS.ouros;
-  document.getElementById("theme-wrapper").className = config.class;
-  document.getElementById("stand-logo").src = config.logo;
-  
+  const themeWrapper = document.getElementById("theme-wrapper");
+  if (themeWrapper) {
+    themeWrapper.className = config.class;
+  }
+
+  const standLogoEl = document.getElementById("stand-logo");
+  if (standLogoEl) {
+    standLogoEl.src = config.logo;
+  }
+
   const waveEl = document.getElementById("stand-header-wave");
   if (waveEl) waveEl.src = config.wave;
 
@@ -57,69 +74,82 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Máscara em tempo real para o campo de telefone
   const inputTelefone = document.getElementById("input-telefone");
-  inputTelefone.addEventListener("input", (e) => {
-    e.target.value = formatarTelefone(e.target.value);
-  });
+  if (inputTelefone) {
+    inputTelefone.addEventListener("input", (e) => {
+      e.target.value = formatarTelefone(e.target.value);
+    });
+  }
 
   // 2. Auto-preenche os inputs se houver dados guardados na sessão
   const salvoNome = localStorage.getItem("participante_nome");
   const salvoTelefone = localStorage.getItem("participante_telefone");
   const sessionBanner = document.getElementById("session-message");
 
-  if (salvoNome) document.getElementById("input-nome").value = salvoNome;
-  if (salvoTelefone) inputTelefone.value = salvoTelefone;
+  if (salvoNome) {
+    const inputNome = document.getElementById("input-nome");
+    if (inputNome) inputNome.value = salvoNome;
+  }
+  if (salvoTelefone && inputTelefone) {
+    inputTelefone.value = salvoTelefone;
+  }
 
   if (salvoNome && salvoTelefone && sessionBanner) {
-    sessionBanner.innerText = "Dados recuperados! Confirme ou edite para validar o estande.";
+    sessionBanner.innerText = "Dados recuperados! Confirme para validar este estande.";
     sessionBanner.style.display = "block";
   }
 
   // 3. Submissão do formulário
   const form = document.getElementById("form-checkin");
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const btnSubmit = document.getElementById("btn-submit");
-    const errorBox = document.getElementById("error-message");
+  if (form) {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const btnSubmit = document.getElementById("btn-submit");
+      const errorBox = document.getElementById("error-message");
 
-    const nome = document.getElementById("input-nome").value.trim();
-    const telefone = inputTelefone.value.trim();
-    const participanteId = localStorage.getItem("participante_id");
+      const nome = document.getElementById("input-nome").value.trim();
+      const telefone = inputTelefone.value.trim();
+      
+      const storedId = localStorage.getItem("participante_id");
+      const participanteId = (storedId && storedId !== "null" && storedId !== "undefined")
+        ? storedId
+        : null;
 
-    btnSubmit.disabled = true;
-    btnSubmit.innerText = "A validar...";
-    errorBox.style.display = "none";
+      btnSubmit.disabled = true;
+      btnSubmit.innerText = "Validando presença...";
+      errorBox.style.display = "none";
 
-    try {
-      const response = await fetch(`${API_BASE_URL}/checkin`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          participante_id: participanteId || null,
-          nome: nome,
-          telefone: telefone,
-          stand_slug: standSlug,
-          token: token
-        })
-      });
+      try {
+        const response = await fetch(`${API_BASE_URL}/checkin`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            participante_id: participanteId,
+            nome: nome,
+            telefone: telefone,
+            stand_slug: standSlug,
+            token: token
+          })
+        });
 
-      const data = await response.json();
+        const data = await response.json();
 
-      if (!response.ok) {
-        throw new Error(data.detail || "Erro ao registar presença.");
+        if (!response.ok) {
+          throw new Error(data.detail || "Erro ao registrar presença.");
+        }
+
+        // Atualiza o localStorage com os dados confirmados
+        localStorage.setItem("participante_id", data.participante.id);
+        localStorage.setItem("participante_nome", data.participante.nome);
+        localStorage.setItem("participante_telefone", data.participante.telefone);
+
+        // Redireciona para a tela de status do participante
+        window.location.href = `status.html?id=${data.participante.id}`;
+      } catch (err) {
+        errorBox.innerText = err.message;
+        errorBox.style.display = "block";
+        btnSubmit.disabled = false;
+        btnSubmit.innerText = "Continuar";
       }
-
-      // Atualiza o localStorage com os dados confirmados/editados
-      localStorage.setItem("participante_id", data.participante.id);
-      localStorage.setItem("participante_nome", data.participante.nome);
-      localStorage.setItem("participante_telefone", data.participante.telefone);
-
-      // Redireciona para o ecrã de progresso
-      window.location.href = `status.html?id=${data.participante.id}`;
-    } catch (err) {
-      errorBox.innerText = err.message;
-      errorBox.style.display = "block";
-      btnSubmit.disabled = false;
-      btnSubmit.innerText = "Continuar";
-    }
-  });
+    });
+  }
 });

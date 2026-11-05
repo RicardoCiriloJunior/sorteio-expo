@@ -3,116 +3,162 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Totem - Stand</title>
+  <title>Totem QR Code - Expotech 2026</title>
   <link rel="stylesheet" href="css/style.css">
-  <style>
-    body.totem-body {
-      background: #0E0C23;
-      color: #FFFFFF;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      margin: 0;
-      padding: 24px;
-      text-align: center;
-    }
-
-    .totem-card {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 28px;
-      padding: 36px 32px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      max-width: 420px;
-      width: 100%;
-      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45);
-    }
-
-    .totem-logo {
-      height: 58px;
-      max-width: 240px;
-      object-fit: contain;
-      margin-bottom: 16px;
-    }
-
-    #stand-title {
-      font-size: 1.5rem;
-      font-weight: 700;
-      margin-bottom: 6px;
-      letter-spacing: -0.02em;
-    }
-
-    .totem-subtitle {
-      font-size: 0.9rem;
-      color: #CBD5E1;
-      margin-bottom: 24px;
-    }
-
-    #qrcode {
-      background: #FFFFFF;
-      padding: 18px;
-      border-radius: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 296px;
-      min-height: 296px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    }
-
-    #timer {
-      margin-top: 22px;
-      font-size: 0.9rem;
-      color: #94A3B8;
-    }
-
-    @media (min-width: 1024px) {
-      .totem-card {
-        max-width: 540px;
-        padding: 48px 44px;
-        border-radius: 36px;
-      }
-
-      .totem-logo {
-        height: 76px;
-        max-width: 300px;
-        margin-bottom: 22px;
-      }
-
-      #stand-title {
-        font-size: 2rem;
-      }
-
-      .totem-subtitle {
-        font-size: 1.05rem;
-        margin-bottom: 30px;
-      }
-
-      #qrcode {
-        padding: 24px;
-        min-width: 340px;
-        min-height: 340px;
-      }
-
-      #timer {
-        margin-top: 28px;
-        font-size: 1rem;
-      }
-    }
-  </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
-<body class="totem-body">
-  <div class="totem-card">
-    <img id="totem-logo" src="assets/ouros-logo.svg" alt="Logo Stand" class="totem-logo">
-    <h1 id="stand-title">Estande</h1>
-    <p class="totem-subtitle">Aponte a câmara do seu telemóvel para fazer check-in</p>
-    <div id="qrcode"></div>
-    <p id="timer">O código QR atualiza automaticamente a cada 5 minutos</p>
+<body id="theme-wrapper" class="theme-ouros">
+  <div class="mobile-container">
+    <!-- Cabeçalho em Onda Temático por Stand (idêntico ao Check-in) -->
+    <header class="header-stand">
+      <img id="stand-header-wave" src="assets/header-wave-ouros.svg" alt="" class="header-wave-bg">
+      
+      <div class="logo-stand-wrapper">
+        <img id="stand-logo" src="assets/ouros-logo.svg" alt="Stand Logo" class="logo-stand">
+        
+        <!-- Logo Composta Exclusiva para EcoCiente -->
+        <div class="ecociente-logo-composed" aria-label="EcoCiente">
+          <img src="assets/ecociente-logo-tree.svg" alt="" class="ecociente-tree">
+          <div class="ecociente-text-col">
+            <img src="assets/ecociente-logo-text.svg" alt="EcoCiente" class="ecociente-text">
+            <img src="assets/ecociente-logo-line.svg" alt="" class="ecociente-line">
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Conteúdo Central: Login por PIN Automático ou QR Code Personalizado -->
+    <main class="checkin-main">
+
+      <!-- ====================================================
+           TELA 1: LOGIN DO ESTANDE (IDENTIFICAÇÃO AUTOMÁTICA)
+           ==================================================== -->
+      <section id="totem-login-view" class="totem-view-section" style="display: none;">
+        <h1 class="checkin-title">
+          Gerar
+          <span class="highlight">QR Code</span>
+        </h1>
+        <p class="checkin-subtitle">Digite o PIN de acesso para ativar o totem do estande</p>
+
+        <!-- Ícones das 4 Marcas Expositoras -->
+        <div class="brands-bar totem-brands-bar" aria-label="Expositores participantes">
+          <img src="assets/icon-ouros.svg" alt="Ouros" class="brand-icon-ouros" data-stand="ouros" title="Ouros">
+          <img src="assets/icon-ceris.svg" alt="Ceris" class="brand-icon-ceris" data-stand="ceris" title="Ceris">
+          <img src="assets/icon-ecociente.svg" alt="EcoCiente" class="brand-icon-ecociente" data-stand="ecociente" title="EcoCiente">
+          <img src="assets/icon-apollo.svg" alt="Apollo" class="brand-icon-apollo" data-stand="apollo" title="apollo >">
+        </div>
+
+        <form id="form-totem-login" class="form-box">
+          <div id="login-error" class="error-banner"></div>
+
+          <div class="input-group">
+            <label for="input-pin">PIN de Acesso</label>
+            <div class="input-wrapper totem-pin-wrapper">
+              <svg class="input-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+              <input
+                type="password"
+                id="input-pin"
+                placeholder="Digite o PIN do estande"
+                inputmode="numeric"
+                autocomplete="current-password"
+                required
+              />
+              <button type="button" id="btn-toggle-pin" class="btn-toggle-eye" aria-label="Mostrar ou ocultar PIN">
+                <svg id="eye-icon-open" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" id="btn-login-submit" class="btn-continuar">
+            Gerar QR Code
+          </button>
+
+          <p class="totem-hint-text">
+            O estande é identificado automaticamente pelo PIN informado.
+          </p>
+        </form>
+      </section>
+
+      <!-- ====================================================
+           TELA 2: TOTEM ATIVO (TOKEN E QR CODE PERSONALIZADO)
+           ==================================================== -->
+      <section id="totem-active-view" class="totem-view-section" style="display: none;">
+        <h1 class="checkin-title">
+          Participe do
+          <span class="highlight">sorteio</span>
+        </h1>
+        <p class="checkin-subtitle">
+          Escaneie o QR Code para fazer check-in no estande <strong id="stand-title">Ouros</strong>
+        </p>
+
+        <!-- Ícones das 4 Marcas Expositoras com Destaque do Stand Ativo -->
+        <div class="brands-bar totem-brands-active" aria-label="Expositores participantes">
+          <img src="assets/icon-ouros.svg" alt="Ouros" class="brand-icon-ouros" data-stand-active="ouros">
+          <img src="assets/icon-ceris.svg" alt="Ceris" class="brand-icon-ceris" data-stand-active="ceris">
+          <img src="assets/icon-ecociente.svg" alt="EcoCiente" class="brand-icon-ecociente" data-stand-active="ecociente">
+          <img src="assets/icon-apollo.svg" alt="Apollo" class="brand-icon-apollo" data-stand-active="apollo">
+        </div>
+
+        <div class="form-box totem-qr-card">
+          <div class="totem-status-pill">
+            <span class="totem-badge-dot"></span>
+            <span id="totem-badge-label">Token Oficial • Ouros</span>
+          </div>
+
+          <div class="qrcode-wrapper">
+            <div id="qrcode"></div>
+          </div>
+
+          <div class="totem-timer-box">
+            <div class="totem-timer-bar">
+              <div id="timer-progress-fill" class="totem-timer-fill"></div>
+            </div>
+            <span id="countdown-text" class="totem-countdown">Renovação automática a cada 5 min</span>
+          </div>
+
+          <div class="totem-actions">
+            <button type="button" id="btn-fullscreen" class="btn-totem-action btn-totem-primary">Tela Cheia</button>
+            <button type="button" id="btn-logout" class="btn-totem-action btn-totem-outline">Trocar PIN</button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Cenas de Mascotes e Ilustrações Inferiores (idêntico ao Check-in) -->
+    <div class="mascote-scene">
+      <!-- Ouros (Ourecos) -->
+      <div class="scene-layer scene-ouros">
+        <img src="assets/ouros-wave-bottom-1.svg" alt="" class="ouros-wave-1">
+        <img src="assets/ouros-wave-bottom-2.svg" alt="" class="ouros-wave-2">
+        <img src="assets/ouros-linhas.svg" alt="" class="ouros-linhas">
+        <img id="stand-mascote" src="assets/ouros-mascote.svg" alt="Mascote Ourecos" class="ouros-mascote-img">
+      </div>
+
+      <!-- Ceris (Ceritecos) -->
+      <div class="scene-layer scene-ceris">
+        <img src="assets/ceris-bg-squares.svg" alt="" class="ceris-bg-squares">
+        <img src="assets/ceris-mascote.svg" alt="Mascote Ceritecos" class="ceris-mascote-img">
+      </div>
+
+      <!-- EcoCiente -->
+      <div class="scene-layer scene-ecociente">
+        <img src="assets/ecociente-leaves-1.png" alt="" class="ecociente-leaves-left">
+        <img src="assets/ecociente-leaves-1.png" alt="" class="ecociente-leaves-mid">
+        <img src="assets/ecociente-mascote.png" alt="Mascote EcoCiente" class="ecociente-mascote-img">
+      </div>
+
+      <!-- Apollo (Apollitos) -->
+      <div class="scene-layer scene-apollo">
+        <img src="assets/apollo-solar.png" alt="Painéis Solares Apollo" class="apollo-solar-img">
+      </div>
+    </div>
   </div>
 
   <script src="js/totem.js"></script>

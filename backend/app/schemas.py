@@ -33,8 +33,29 @@ class ParticipanteResponse(BaseModel):
     telefone: str
 
 
+class StandItem(BaseModel):
+    slug: str
+    nome: str
+
+
+class StandLoginRequest(BaseModel):
+    pin: str = Field(min_length=1, max_length=64)
+    stand_slug: str | None = Field(default=None, max_length=50)
+    base_url: str | None = None
+
+
+class StandLoginResponse(BaseModel):
+    sucesso: bool = True
+    stand: str
+    nome: str
+    token: str
+    expires_in_seconds: int
+    qr_url: str
+
+
 class TokenResponse(BaseModel):
     stand: str
+    nome: str | None = None
     token: str
     expires_in_seconds: int
     qr_url: str
@@ -62,3 +83,18 @@ class StatusResponse(BaseModel):
 class SorteioResponse(BaseModel):
     total_aptos: int
     ganhador: ParticipanteResponse | None
+
+
+class StandContagem(BaseModel):
+    slug: str
+    nome: str
+    total_checkins: int
+
+
+class AdminResumoResponse(BaseModel):
+    total_participantes: int
+    total_checkins: int
+    total_aptos: int
+    stands: list[StandContagem]
+    aptos: list[ParticipanteResponse]
+

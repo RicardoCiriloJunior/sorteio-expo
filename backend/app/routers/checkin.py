@@ -23,7 +23,9 @@ router = APIRouter(tags=["Participação"])
     },
 )
 def checkin(payload: CheckinRequest, request: Request, db: Session = Depends(get_db)):
-    stand = db.scalar(select(Stand).where(Stand.slug == payload.stand_slug))
+    clean_slug = payload.stand_slug.strip().lower()
+    clean_slug = "ecociente" if clean_slug == "eco" else clean_slug
+    stand = db.scalar(select(Stand).where(Stand.slug == clean_slug))
     if stand is None:
         raise HTTPException(status_code=404, detail="Estande não encontrado")
     secret = request.app.state.settings.hmac_secret.get_secret_value()

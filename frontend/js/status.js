@@ -1,4 +1,14 @@
-const API_BASE_URL = "http://localhost:6767/api/v1";
+function getApiBaseUrl() {
+  if (window.location.port === "6767") {
+    return `${window.location.origin}/api/v1`;
+  }
+  if (window.location.hostname && window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1") {
+    return `http://${window.location.hostname}:6767/api/v1`;
+  }
+  return "http://localhost:6767/api/v1";
+}
+
+const API_BASE_URL = getApiBaseUrl();
 
 const STAND_CARDS_META = {
   ouros: {
@@ -31,6 +41,7 @@ const DEFAULT_STANDS_ORDER = ["ouros", "ceris", "ecociente", "apollo"];
 
 function renderizarStands(standsList) {
   const container = document.getElementById("stands-container");
+  if (!container) return;
   container.innerHTML = "";
 
   standsList.forEach((stand) => {
@@ -66,7 +77,6 @@ function atualizarBarraProgresso(totalVisitados, concluiuTodos) {
   const percent = (qtd / 4) * 100;
 
   if (fill) {
-    // No Figma, 0 visitados ainda mostra a ponta inicial (25%) ou proporcional
     fill.style.width = qtd === 0 ? "25%" : `${percent}%`;
   }
 
@@ -106,7 +116,6 @@ function exibirModalSucesso() {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-  // Renderiza o estado inicial com os 4 cartões do Figma imediatamente
   renderizarStands(
     DEFAULT_STANDS_ORDER.map((slug) => ({
       slug,
@@ -118,7 +127,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const urlParams = new URLSearchParams(window.location.search);
   const participanteId = urlParams.get("id") || localStorage.getItem("participante_id");
-  const demoVisits = urlParams.get("demo"); // Permite pré-visualizar ex: ?demo=4
+  const demoVisits = urlParams.get("demo");
 
   if (demoVisits !== null) {
     const count = Math.max(0, Math.min(4, parseInt(demoVisits, 10) || 0));
@@ -134,7 +143,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   if (!participanteId) {
-    alert("Nenhum participante identificado. Escaneie um estande primeiro.");
     return;
   }
 
@@ -147,7 +155,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     renderizarStands(data.stands);
     atualizarBarraProgresso(data.total_visitados, data.concluiu_todos);
 
-    // Se completou os 4, exibe o modal de felicitações da Alexa
     if (data.concluiu_todos) {
       exibirModalSucesso();
     }

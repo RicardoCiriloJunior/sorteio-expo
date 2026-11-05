@@ -14,8 +14,8 @@ Copy-Item backend/.env.example backend/.env
 ```
 
 Edite `backend/.env`: preencha `HMAC_SECRET` e `ADMIN_KEY` com valores diferentes
-de pelo menos 32 caracteres. Os quatro PINs, com pelo menos 6 caracteres, só são
-necessários para cadastrar estandes pelo comando `backend.app.seed`.
+de pelo menos 32 caracteres. Os quatro PINs, com pelo menos 6 caracteres, são
+usados para autenticar cada estande no Totem e cadastrar estandes pelo comando `backend.app.seed`.
 Gere cada segredo com:
 
 ```powershell
@@ -25,37 +25,49 @@ Gere cada segredo com:
 Com `DATABASE_URL` configurada para um PostgreSQL acessível:
 
 ```powershell
-.\.venv\Scripts\python.exe -m uvicorn backend.main:app --host 127.0.0.1 --port 6767 --reload
+python -m uvicorn backend.main:app --host 0.0.0.0 --port 6767 --reload
 ```
 
-`DATABASE_URL` aceita `postgresql+psycopg://`, `postgresql://`, `postgres://` e
-`jdbc:postgresql://`. A aplicação converte a URL para o driver psycopg e a opção JDBC
-`channelBinding` para `channel_binding`, preservando SSL e as credenciais. Por exemplo:
+A aplicação FastAPI já serve tanto a API REST (`/api/v1/...`) quanto as páginas do Totem e Check-in:
+- **Totem do Estande**: [http://localhost:6767/totem.html](http://localhost:6767/totem.html)
+- **Check-in do Participante**: [http://localhost:6767/checkin.html](http://localhost:6767/checkin.html)
+- **Status do Participante**: [http://localhost:6767/status.html](http://localhost:6767/status.html)
+- **Painel Admin do Sorteio**: [http://localhost:6767/admin.html](http://localhost:6767/admin.html)
+- **Swagger UI**: [http://localhost:6767/docs](http://localhost:6767/docs)
 
-```dotenv
-DATABASE_URL=postgresql://usuario:senha@host/banco?sslmode=require&channel_binding=require
-```
+## PINs de Acesso dos Estandes
 
-As tabelas já devem existir no banco. O comando `backend.app.seed` serve apenas para
-cadastrar os quatro estandes, caso ainda não estejam cadastrados. Ele é idempotente
-e preserva os PINs existentes. Se os estandes já estiverem cadastrados, basta iniciar o servidor.
+Cada estande possui seu PIN exclusivo para autenticar no Totem:
+- **Ouros**: `573550` (slug: `ouros`)
+- **Ceris**: `729460` (slug: `ceris`)
+- **EcoCiente**: `865686` (slug: `ecociente`)
+- **Apollo**: `641450` (slug: `apollo`)
 
-Para cadastrar estandes ausentes, execute `python -m backend.app.seed` com o ambiente
-virtual ativado e os PINs configurados.
-
-Documentação interativa: [Swagger UI](http://localhost:6767/docs).
-Contrato: [OpenAPI](http://localhost:6767/openapi.json).
+Ao digitar o PIN no Totem (com ou sem selecionar o estande), o sistema identifica o estande, autentica e gera o QR Code oficial assinado com validade de 5 minutos, renovado automaticamente a cada ~3 minutos e 20 segundos.
 
 ## Endpoints
 
 | Método | Rota | Credencial | Resultado |
 | --- | --- | --- | --- |
-| GET | `/api/v1/stands/{slug}/token` | `X-Stand-Pin` | Token, URL do QR Code e segundos até expirar |
+| GET | `/api/v1/stands` | Pública | Lista os estandes oficiais |
+| POST | `/api/v1/stands/login` | PIN no corpo | Autentica o estande (identificado pelo PIN), gera token e QR Code |
+| GET | `/api/v1/stands/{slug}/token` | `X-Stand-Pin` ou `?pin=` | Token, URL do QR Code e segundos até expirar |
 | POST | `/api/v1/checkin` | Token no corpo | Cadastra/atualiza participante e confirma presença |
 | GET | `/api/v1/participantes/{participante_id}/status` | UUID do participante | Progresso nos quatro estandes |
 | GET | `/api/v1/admin/sorteio/sortear` | `X-Admin-Key` | Total de aptos e ganhador, ou `null` se não houver aptos |
 
-Corpo do check-in:
+Corpo do login do estande (`POST /api/v1/stands/login`):
+
+```json
+{
+  "pin": "573550",
+  "stand_slug": "ouros",
+  "base_url": "http://192.168.1.15:6767"
+}
+```
+*(Nota: `stand_slug` e `base_url` são opcionais; se `stand_slug` for omitido, o backend localiza o estande correspondente ao PIN automaticamente).*
+
+Corpo do check-in (`POST /api/v1/checkin`):
 
 ```json
 {
@@ -71,50 +83,13 @@ No primeiro estande, omita `participante_id` ou envie `null`. Guarde o UUID reto
 no localStorage e envie-o nas visitas seguintes. Um UUID inexistente retorna 404;
 um telefone já associado a outro participante retorna 400. O telefone é normalizado
 para 10 ou 11 dígitos com DDD; a formatação e o prefixo brasileiro `+55` são removidos.
-Não há recuperação automática por telefone: sem o UUID, cadastrar o mesmo telefone retorna 400.
 
-Token inválido/expirado retorna 400; estande inexistente retorna 404; credenciais
-ausentes/incorretas retornam 401; erros de formato do corpo/UUID retornam 422.
-Repetir um check-in com o UUID correto retorna 200 e mantém uma única presença.
-Nome, telefone e check-in são gravados na mesma transação: conflito de telefone não deixa
-alterações parciais. O banco também impõe unicidade e exclusão em cascata dos check-ins.
-
-## Tokens e sorteio
+## Tokens e Sorteio
 
 Cada token vale por 5 minutos a partir da geração. O formato é
 `{expires_at}.{assinatura}`, sendo `expires_at` um timestamp Unix e a assinatura o
 HMAC-SHA256 completo de `checkin:v2:{slug}:{expires_at}`. A assinatura vincula o token
-ao estande e à expiração: um token do Ceris não é válido para o Ouros, e alterar
-a data de expiração também o invalida. `expires_in_seconds` retorna 300.
-O totem usa esse prazo para renovar o QR Code antecipadamente, após 200 segundos.
-Ao atualizar uma versão que usava tokens por janelas fixas, gere novos QR Codes.
-A URL aponta para `PUBLIC_BASE_URL/checkin?stand=...&token=...`.
-
-O cadastro pelo comando `seed` armazena PINs como hashes PBKDF2-SHA256 com salt
-individual e 600 mil iterações; por isso o modelo usa VARCHAR(255) para `pin_acesso`.
-A validação também aceita os PINs em texto já existentes no banco, sem alterar os registros.
-Segredos ficam em variáveis de ambiente ou `backend/.env`, ignorado pelo Git.
-Configuração é validada ao carregar a aplicação. As respostas usam `Cache-Control: no-store`.
+ao estande e à expiração. O totem usa esse prazo para renovar o QR Code antecipadamente a cada 200 segundos.
+A URL aponta para `BASE_URL/checkin.html?stand=...&token=...`.
 
 O sorteio usa `secrets.choice` entre quem visitou os quatro slugs oficiais distintos.
-Outros estandes não substituem uma visita obrigatória. A rota GET mantém o contrato proposto:
-cada chamada realiza uma nova seleção; o ganhador não é persistido nem excluído de chamadas futuras.
-Não foi especificada uma rota de relatório separado.
-
-O UUID funciona como credencial de posse no contrato proposto. O token dinâmico limita
-o tempo de uso do QR Code, mas permite compartilhamento dentro da janela e não comprova
-presença física. Para exposição pública, configure HTTPS, limite de requisições no proxy,
-origens CORS exatas e logs sem query strings, corpos ou credenciais.
-Não distribua `HMAC_SECRET` ou `ADMIN_KEY` ao frontend público.
-
-## Verificação de código
-
-```powershell
-.\.venv\Scripts\python.exe -m pip install -r backend/requirements-dev.txt
-.\.venv\Scripts\python.exe -m ruff check backend
-```
-
-A implementação segue os padrões de sessão por requisição e injeção de dependências
-da [documentação do FastAPI](https://fastapi.tiangolo.com/tutorial/sql-databases/)
-e usa as restrições e transações do
-[SQLAlchemy para PostgreSQL](https://docs.sqlalchemy.org/en/20/dialects/postgresql.html).

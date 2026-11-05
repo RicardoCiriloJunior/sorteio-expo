@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sorteio Oficial - Expotech 2026</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="admin-body">
+  <div class="mobile-container admin-container">
+    <!-- Cabeçalho Multi-Marcas em Onda (mesmo padrão neutro de status.html com as 4 cores) -->
+    <header class="status-header admin-header">
+      <img src="assets/header-wave-status.svg" alt="" class="status-wave-bg">
+
+      <h1>Sorteio Expotech</h1>
+      <p>Apuração oficial entre os visitantes dos 4 estandes</p>
+    </header>
+
+    <!-- Conteúdo Central: Login Administrativo ou Painel de Sorteio -->
+    <main class="admin-main">
+
+      <!-- ====================================================
+           TELA 1: LOGIN ADMINISTRATIVO (X-ADMIN-KEY)
+           ==================================================== -->
+      <section id="admin-login-view" class="totem-view-section" style="display: none;">
+        <!-- Barra com os 4 ícones das marcas igualmente representados -->
+        <div class="brands-bar admin-brands-neutral" aria-label="Expositores participantes">
+          <img src="assets/icon-ouros.svg" alt="Ouros" class="brand-icon-ouros">
+          <img src="assets/icon-ceris.svg" alt="Ceris" class="brand-icon-ceris">
+          <img src="assets/icon-ecociente.svg" alt="EcoCiente" class="brand-icon-ecociente">
+          <img src="assets/icon-apollo.svg" alt="Apollo" class="brand-icon-apollo">
+        </div>
+
+        <form id="form-admin-login" class="form-box admin-form-box">
+          <div class="admin-card-header">
+            <h2>Acesso da Organização</h2>
+            <p>Informe a credencial administrativa para abrir o painel do sorteio</p>
+          </div>
+
+          <div id="admin-login-error" class="error-banner"></div>
+
+          <div class="input-group">
+            <label for="input-admin-key">Chave de Admin</label>
+            <div class="input-wrapper totem-pin-wrapper">
+              <svg class="input-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path>
+              </svg>
+              <input
+                type="password"
+                id="input-admin-key"
+                placeholder="Digite a ADMIN_KEY"
+                autocomplete="current-password"
+                required
+              />
+              <button type="button" id="btn-toggle-admin-key" class="btn-toggle-eye" aria-label="Mostrar ou ocultar chave">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" id="btn-admin-login" class="btn-continuar btn-admin-neutral">
+            Acessar Painel de Sorteio
+          </button>
+
+          <p class="totem-hint-text">
+            O sorteio contempla igualmente todos os participantes que visitaram os 4 estandes.
+          </p>
+        </form>
+      </section>
+
+      <!-- ====================================================
+           TELA 2: PAINEL DE SORTEIO ATIVO (GENÉRICO / 4 GRUPOS)
+           ==================================================== -->
+      <section id="admin-panel-view" class="totem-view-section" style="display: none;">
+
+        <!-- Cartões de Presença dos 4 Estandes (cada um com sua cor oficial, estilo status.html) -->
+        <div class="admin-stands-grid" aria-label="Check-ins por estande">
+          <div class="admin-stand-mini stand-ouros">
+            <div class="admin-stand-mini-bar"></div>
+            <div class="admin-stand-mini-body">
+              <img src="assets/icon-ouros.svg" alt="Ouros">
+              <span class="admin-stand-mini-name">Ouros</span>
+              <span id="count-ouros" class="admin-stand-count">0 check-ins</span>
+            </div>
+          </div>
+
+          <div class="admin-stand-mini stand-ceris">
+            <div class="admin-stand-mini-bar"></div>
+            <div class="admin-stand-mini-body">
+              <img src="assets/icon-ceris.svg" alt="Ceris">
+              <span class="admin-stand-mini-name">Ceris</span>
+              <span id="count-ceris" class="admin-stand-count">0 check-ins</span>
+            </div>
+          </div>
+
+          <div class="admin-stand-mini stand-ecociente">
+            <div class="admin-stand-mini-bar"></div>
+            <div class="admin-stand-mini-body">
+              <img src="assets/icon-ecociente.svg" alt="EcoCiente">
+              <span class="admin-stand-mini-name">EcoCiente</span>
+              <span id="count-ecociente" class="admin-stand-count">0 check-ins</span>
+            </div>
+          </div>
+
+          <div class="admin-stand-mini stand-apollo">
+            <div class="admin-stand-mini-bar"></div>
+            <div class="admin-stand-mini-body">
+              <img src="assets/icon-apollo.svg" alt="Apollo">
+              <span class="admin-stand-mini-name">apollo &gt;</span>
+              <span id="count-apollo" class="admin-stand-count">0 check-ins</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-box admin-raffle-card">
+          <div id="admin-panel-error" class="error-banner"></div>
+
+          <!-- Métricas Gerais em Tempo Real -->
+          <div class="admin-stats-grid">
+            <div class="admin-stat-box">
+              <span id="stat-participantes" class="admin-stat-value">0</span>
+              <span class="admin-stat-label">Participantes</span>
+            </div>
+            <div class="admin-stat-box">
+              <span id="stat-checkins" class="admin-stat-value">0</span>
+              <span class="admin-stat-label">Visitas Totais</span>
+            </div>
+            <div class="admin-stat-box stat-highlight">
+              <span id="stat-aptos" class="admin-stat-value">0</span>
+              <span class="admin-stat-label">Aptos</span>
+            </div>
+          </div>
+
+          <!-- Palco do Sorteio -->
+          <div id="admin-stage-box" class="admin-stage-box">
+            <!-- Estado 1: Aguardando Sorteio -->
+            <div id="stage-idle" class="stage-view">
+              <img src="assets/alexa-echo.png" alt="Prêmio Alexa Echo" class="stage-prize-img">
+              <div class="stage-prize-title">Prêmio Oficial: Echo Dot (Alexa)</div>
+              <div id="stage-ready-hint" class="stage-prize-sub">Clique no botão abaixo para sortear um ganhador</div>
+            </div>
+
+            <!-- Estado 2: Sorteando (Suspense) -->
+            <div id="stage-rolling" class="stage-view" style="display: none;">
+              <span class="rolling-badge">Sorteando participante...</span>
+              <div id="rolling-name" class="rolling-name">Preparando...</div>
+              <div id="rolling-phone" class="rolling-phone">(••) •••••-••••</div>
+            </div>
+
+            <!-- Estado 3: Ganhador Revelado -->
+            <div id="stage-winner" class="stage-view" style="display: none;">
+              <span class="winner-badge">Vencedor do Sorteio</span>
+              <div id="winner-name" class="winner-name">-</div>
+              <div class="winner-phone-row">
+                <span id="winner-phone" class="winner-phone">-</span>
+              </div>
+              <div id="winner-id" class="winner-id-tag"></div>
+            </div>
+          </div>
+
+          <button type="button" id="btn-sortear" class="btn-continuar btn-admin-neutral">
+            Realizar Sorteio Agora
+          </button>
+
+          <!-- Lista Expansível de Participantes Aptos -->
+          <div id="aptos-drawer" class="aptos-drawer" style="display: none;">
+            <div class="aptos-drawer-title">Participantes Aptos</div>
+            <ul id="aptos-list" class="aptos-list"></ul>
+          </div>
+
+          <div class="totem-actions">
+            <button type="button" id="btn-toggle-aptos" class="btn-totem-action btn-totem-outline">Ver Aptos</button>
+            <button type="button" id="btn-refresh-stats" class="btn-totem-action btn-totem-outline">Atualizar</button>
+            <button type="button" id="btn-admin-fullscreen" class="btn-totem-action btn-totem-outline">Tela Cheia</button>
+            <button type="button" id="btn-admin-logout" class="btn-totem-action btn-totem-outline">Sair</button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Modal de Celebração do Ganhador (mesmo padrão do Modal da Alexa em status.html) -->
+    <div id="modal-ganhador" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-winner-heading">
+      <div class="modal-content">
+        <div class="modal-top-bar">
+          <img src="assets/ouros-logo.svg" alt="Ouros">
+          <img src="assets/ceris-logo.svg" alt="Ceris">
+          <img src="assets/ecociente-logo-text.svg" alt="EcoCiente">
+          <img src="assets/apollo-logo.svg" alt="Apollo">
+        </div>
+
+        <button id="btn-close-winner-modal" class="modal-close" aria-label="Fechar modal">
+          <img src="assets/modal-close.svg" alt="Fechar">
+        </button>
+
+        <div class="modal-header-text">
+          <h2 id="modal-winner-heading">Vencedor Sorteado</h2>
+          <p>Participante contemplado no sorteio oficial</p>
+        </div>
+
+        <div class="modal-winner-box">
+          <div id="modal-winner-name" class="modal-winner-name">-</div>
+          <div id="modal-winner-phone" class="modal-winner-phone">-</div>
+        </div>
+
+        <img src="assets/alexa-echo.png" alt="Prêmio Alexa Echo" class="modal-prize-img" style="width: 120px; height: 120px; margin-top: 8px;">
+
+        <div class="modal-footer-wave-box">
+          <img src="assets/modal-footer-wave.svg" alt="" class="modal-wave-bg">
+          <p class="modal-result-time">Sorteio Oficial <strong>Expotech 2026</strong></p>
+          <p class="modal-good-luck">Parabéns pela premiação.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/admin.js"></script>
+</body>
+</html>
