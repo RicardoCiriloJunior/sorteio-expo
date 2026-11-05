@@ -45,6 +45,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     for router in (stand.router, checkin.router, admin.router):
         app.include_router(router, prefix="/api/v1")
 
+    @app.get("/healthz", include_in_schema=False)
+    def healthz():
+        return {"status": "ok"}
+
     # Servir arquivos estáticos do frontend quando presentes
     frontend_dir = Path(__file__).resolve().parents[2] / "frontend"
     if frontend_dir.exists():

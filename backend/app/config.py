@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from pydantic import AnyHttpUrl, Field, SecretStr, field_validator, model_validator
+from pydantic import AliasChoices, AnyHttpUrl, Field, SecretStr, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from sqlalchemy.engine import make_url
 from sqlalchemy.exc import ArgumentError
@@ -17,7 +17,9 @@ class Settings(BaseSettings):
     database_url: SecretStr
     hmac_secret: SecretStr = Field(min_length=32)
     admin_key: SecretStr = Field(min_length=32)
-    public_base_url: AnyHttpUrl
+    public_base_url: AnyHttpUrl = Field(
+        validation_alias=AliasChoices("PUBLIC_BASE_URL", "RENDER_EXTERNAL_URL", "public_base_url")
+    )
     cors_origins: list[str] = []
     ouros_pin: SecretStr | None = None
     ceris_pin: SecretStr | None = None

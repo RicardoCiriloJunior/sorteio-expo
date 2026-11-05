@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: sorteio-expo
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /healthz
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: HMAC_SECRET
+        generateValue: true
+      - key: ADMIN_KEY
+        generateValue: true

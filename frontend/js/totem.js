@@ -1,15 +1,5 @@
 function getApiBaseUrl() {
-  if (window.location.port === "6767") {
-    return `${window.location.origin}/api/v1`;
-  }
-  if (
-    window.location.hostname &&
-    window.location.hostname !== "localhost" &&
-    window.location.hostname !== "127.0.0.1"
-  ) {
-    return `http://${window.location.hostname}:6767/api/v1`;
-  }
-  return "http://localhost:6767/api/v1";
+  return "/api/v1";
 }
 
 const API_BASE = getApiBaseUrl();

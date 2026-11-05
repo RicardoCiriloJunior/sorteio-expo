@@ -35,6 +35,71 @@ A aplicação FastAPI já serve tanto a API REST (`/api/v1/...`) quanto as pági
 - **Painel Admin do Sorteio**: [http://localhost:6767/admin.html](http://localhost:6767/admin.html)
 - **Swagger UI**: [http://localhost:6767/docs](http://localhost:6767/docs)
 
+As páginas chamam `/api/v1` no mesmo domínio. Para desenvolver localmente, abra
+as páginas pelo FastAPI na porta 6767.
+
+## Deploy no Render (backend e frontend juntos)
+
+O `Dockerfile` empacota a API e o frontend em um único serviço. O processo escuta
+em `0.0.0.0:$PORT`, e `/healthz` fornece o health check do Render.
+O PostgreSQL permanece no banco externo já configurado; o deploy não cria nem altera tabelas.
+
+### Usando o Blueprint
+
+1. Faça commit e push deste projeto, incluindo `Dockerfile`, `.dockerignore` e `render.yaml`.
+2. No Render, escolha **New > Blueprint** e conecte o repositório com `render.yaml` na raiz.
+3. Informe `DATABASE_URL` com a conexão do PostgreSQL existente (por exemplo, a conexão do Neon,
+   incluindo `sslmode=require` e `channel_binding=require`, quando fornecidos pelo provedor).
+4. Confirme a criação do serviço. O Blueprint gera `HMAC_SECRET` e `ADMIN_KEY` automaticamente.
+5. Após o deploy, abra `https://SEU-SERVICO.onrender.com/totem.html` e entre com o PIN do estande.
+   O painel de sorteio fica em `/admin.html`; use o valor de `ADMIN_KEY` da seção **Environment**.
+
+Não é necessário configurar `PUBLIC_BASE_URL` para o domínio padrão do Render:
+a aplicação usa `RENDER_EXTERNAL_URL`, fornecida pela plataforma. Se usar domínio próprio,
+configure `PUBLIC_BASE_URL=https://seu-dominio.com`. O totem também envia a origem atual
+para gerar links que funcionam no celular.
+
+As credenciais dos estandes continuam sendo as cadastradas no PostgreSQL.
+Os valores `OUROS_PIN`, `CERIS_PIN`, `ECOCIENTE_PIN` e `APOLLO_PIN` são usados pelo
+comando de cadastro inicial e não precisam ser informados para iniciar o serviço.
+O arquivo `.env` local não é incluído na imagem; configure os segredos no Render.
+
+O Blueprint usa `plan: free` para testes. Esse plano suspende o serviço após 15 minutos
+sem tráfego e demora para reativá-lo. Para o evento, escolha um plano que mantenha a aplicação ativa.
+Veja as [limitações do plano gratuito](https://render.com/docs/free).
+
+### Criando o serviço manualmente
+
+Em **New > Web Service**, conecte o repositório, escolha **Docker** e mantenha a raiz
+do repositório como contexto. Use `./Dockerfile`, health check `/healthz` e deixe
+**Docker Command** vazio para usar o comando da imagem. Configure:
+
+| Variável | Valor |
+| --- | --- |
+| `DATABASE_URL` | Conexão do PostgreSQL existente |
+| `HMAC_SECRET` | Segredo de pelo menos 32 caracteres |
+| `ADMIN_KEY` | Outro segredo de pelo menos 32 caracteres |
+| `PUBLIC_BASE_URL` | Opcional; use apenas para sobrescrever o domínio padrão |
+
+Mantenha os segredos estáveis entre deploys para preservar a validação dos QR Codes
+que ainda estiverem válidos. Não há comando de build ou start adicional: o Dockerfile já os define.
+
+Referências: [Docker no Render](https://render.com/docs/docker),
+[Blueprint](https://render.com/docs/blueprint-spec) e
+[variáveis de ambiente da plataforma](https://render.com/docs/environment-variables).
+
+### Executar a imagem localmente
+
+```powershell
+docker build -t sorteio-expo .
+docker run --rm -p 6767:10000 --env-file backend/.env sorteio-expo
+```
+
+Abra [http://localhost:6767/totem.html](http://localhost:6767/totem.html).
+Se usar `--env-file`, os valores precisam estar no formato `CHAVE=valor`, sem aspas
+externas envolvendo a URL ou os segredos. Se o PostgreSQL estiver no computador local,
+substitua `localhost` por `host.docker.internal` na URL usada pelo contêiner.
+
 ## PINs de Acesso dos Estandes
 
 Cada estande possui seu PIN exclusivo para autenticar no Totem:
