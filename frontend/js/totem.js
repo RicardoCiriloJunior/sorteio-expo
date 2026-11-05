@@ -1,4 +1,4 @@
-const API_BASE = "http://localhost:8000/api/v1";
+const API_BASE = "http://localhost:6767/api/v1";
 
 const TOTEM_LOGOS = {
   ouros: "assets/ouros-logo.svg",
@@ -27,6 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const qrcode = new QRCode(qrContainer, { width: 260, height: 260 });
 
   async function renovarQR() {
+    let proximaAtualizacaoMs = 15000;
     try {
       const res = await fetch(`${API_BASE}/stands/${stand}/token`, {
         headers: { "X-Stand-Pin": pin }
@@ -35,6 +36,11 @@ document.addEventListener("DOMContentLoaded", () => {
       if (res.ok && data.qr_url) {
         qrcode.clear();
         qrcode.makeCode(data.qr_url);
+        const validadeSegundos = Number(data.expires_in_seconds);
+        // Renova antes da expiração para manter tempo para preencher o formulário.
+        proximaAtualizacaoMs = Number.isFinite(validadeSegundos) && validadeSegundos > 0
+          ? Math.max(1000, Math.floor(validadeSegundos * 2 / 3) * 1000)
+          : 60000;
       }
     } catch (e) {
       console.error("Falha ao renovar código QR:", e);
@@ -43,9 +49,8 @@ document.addEventListener("DOMContentLoaded", () => {
       qrcode.clear();
       qrcode.makeCode(fallbackUrl);
     }
+    setTimeout(renovarQR, proximaAtualizacaoMs);
   }
 
   renovarQR();
-  // Atualiza a cada 5 minutos (300 000 ms)
-  setInterval(renovarQR, 300000);
 });
