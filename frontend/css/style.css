@@ -1262,17 +1262,13 @@ body {
 .theme-ecociente #qrcode { border-color: rgba(6, 78, 59, 0.4); }
 .theme-apollo #qrcode { border-color: rgba(211, 65, 20, 0.45); }
 
-#qrcode canvas {
-  display: none !important;
-}
-
+#qrcode canvas,
 #qrcode img {
   width: 100% !important;
   height: 100% !important;
   max-width: 100% !important;
   max-height: 100% !important;
   object-fit: contain !important;
-  display: block !important;
   margin: 0 auto !important;
 }
 

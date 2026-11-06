@@ -32,7 +32,12 @@ const STAND_CONFIGS = {
 };
 
 function formatarTelefone(valor) {
-  const digitos = valor.replace(/\D/g, "").slice(0, 11);
+  if (!valor) return "";
+  let digitos = valor.toString().replace(/\D/g, "");
+  if ((digitos.length === 12 || digitos.length === 13) && digitos.startsWith("55")) {
+    digitos = digitos.slice(2);
+  }
+  digitos = digitos.slice(0, 11);
   if (digitos.length === 0) return "";
   if (digitos.length <= 2) return `(${digitos}`;
   if (digitos.length <= 6) return `(${digitos.slice(0, 2)}) ${digitos.slice(2)}`;
@@ -84,7 +89,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (inputNome) inputNome.value = salvoNome;
   }
   if (salvoTelefone && inputTelefone) {
-    inputTelefone.value = salvoTelefone;
+    inputTelefone.value = formatarTelefone(salvoTelefone);
   }
 
   if (salvoNome && salvoTelefone && sessionBanner) {
@@ -134,7 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Atualiza o localStorage com os dados confirmados
         localStorage.setItem("participante_id", data.participante.id);
         localStorage.setItem("participante_nome", data.participante.nome);
-        localStorage.setItem("participante_telefone", data.participante.telefone);
+        localStorage.setItem("participante_telefone", formatarTelefone(data.participante.telefone));
 
         // Redireciona para a tela de status do participante
         window.location.href = `status.html?id=${data.participante.id}`;

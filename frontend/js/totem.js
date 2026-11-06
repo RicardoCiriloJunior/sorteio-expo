@@ -246,6 +246,31 @@ document.addEventListener("DOMContentLoaded", () => {
       colorLight: "#ffffff",
       correctLevel: QRCode.CorrectLevel.M
     });
+
+    const canvas = qrContainer.querySelector("canvas");
+    const img = qrContainer.querySelector("img");
+
+    if (canvas) {
+      // O qrcodejs possui uma limitacao em navegadores mobile Android modernos (Android 10+):
+      // o regex interno falha ao detectar a versao e nao chama makeImage(), deixando a tag <img> sem src.
+      // Sincronizamos o dataURI do canvas para a imagem:
+      try {
+        if (img && (!img.src || img.src === window.location.href)) {
+          img.src = canvas.toDataURL("image/png");
+        }
+      } catch (e) {
+        console.warn("Falha ao gerar DataURI do QRCode:", e);
+      }
+    }
+
+    // Se a imagem possui src valido em base64, prioriza a imagem; caso contrario, exibe o canvas diretamente
+    if (img && img.src && img.src.startsWith("data:image")) {
+      img.style.display = "block";
+      if (canvas) canvas.style.display = "none";
+    } else if (canvas) {
+      canvas.style.display = "block";
+      if (img) img.style.display = "none";
+    }
   }
 
   async function realizarLogin(pin) {
