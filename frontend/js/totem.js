@@ -65,6 +65,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const waveEl = document.getElementById("stand-header-wave");
   const mascoteEl = document.getElementById("stand-mascote");
 
+  const loadingView = document.getElementById("totem-loading-view");
   const loginView = document.getElementById("totem-login-view");
   const activeView = document.getElementById("totem-active-view");
   const formLogin = document.getElementById("form-totem-login");
@@ -281,22 +282,37 @@ document.addEventListener("DOMContentLoaded", () => {
       base_url: baseUrl
     };
 
-    const res = await fetch(`${API_BASE}/stands/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
+    let res;
+    try {
+      res = await fetch(`${API_BASE}/stands/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+    } catch (networkErr) {
+      const err = new Error("Falha na conexão com o servidor. Verifique a internet do dispositivo.");
+      err.isNetworkError = true;
+      throw err;
+    }
 
-    const data = await res.json();
+    const data = await res.json().catch(() => ({}));
     if (!res.ok) {
-      throw new Error(data.detail || "PIN inválido ou não encontrado.");
+      const err = new Error(data.detail || "PIN inválido ou não encontrado.");
+      err.status = res.status;
+      err.isAuthError = (res.status === 401 || res.status === 403 || res.status === 404);
+      throw err;
     }
 
     currentStand = normalizarStandSlug(data.stand);
     currentStandName = data.nome || STAND_CONFIGS[currentStand]?.nome || currentStand.toUpperCase();
     currentPin = pin;
 
-    // Salva sessão local para manter conectado caso recarregue
+    // Persiste no localStorage para manter a sessão ao fechar o navegador do celular
+    localStorage.setItem("totem_stand", currentStand);
+    localStorage.setItem("totem_stand_name", currentStandName);
+    localStorage.setItem("totem_pin", currentPin);
+
+    // Mantém compatibilidade com sessionStorage
     sessionStorage.setItem("totem_stand", currentStand);
     sessionStorage.setItem("totem_stand_name", currentStandName);
     sessionStorage.setItem("totem_pin", currentPin);
@@ -314,6 +330,7 @@ document.addEventListener("DOMContentLoaded", () => {
       badgeLabelEl.innerText = `Token Oficial • ${currentStandName || currentStand.toUpperCase()}`;
     }
 
+    if (loadingView) loadingView.style.display = "none";
     loginView.style.display = "none";
     activeView.style.display = "flex";
 
@@ -360,9 +377,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function logout() {
     const ultimoStand = currentStand || "ouros";
+    localStorage.removeItem("totem_stand");
+    localStorage.removeItem("totem_stand_name");
+    localStorage.removeItem("totem_pin");
     sessionStorage.removeItem("totem_stand");
     sessionStorage.removeItem("totem_stand_name");
     sessionStorage.removeItem("totem_pin");
+
     currentStand = null;
     currentStandName = null;
     currentPin = null;
@@ -380,17 +401,18 @@ document.addEventListener("DOMContentLoaded", () => {
     if (loginError) loginError.style.display = "none";
 
     aplicarTemaStand(ultimoStand);
+    if (loadingView) loadingView.style.display = "none";
     activeView.style.display = "none";
     loginView.style.display = "flex";
   }
 
-  // Inicialização: verifica parâmetros na URL (?pin=... ou ?stand=...) ou sessão
+  // Inicialização: verifica parâmetros na URL (?pin=... ou ?stand=...) ou armazenamento persistente
   const urlParams = new URLSearchParams(window.location.search);
   const paramPin = urlParams.get("pin");
   const paramStand = urlParams.get("stand");
 
-  const savedPin = sessionStorage.getItem("totem_pin");
-  const savedStand = sessionStorage.getItem("totem_stand");
+  const savedPin = localStorage.getItem("totem_pin") || sessionStorage.getItem("totem_pin");
+  const savedStand = localStorage.getItem("totem_stand") || sessionStorage.getItem("totem_stand");
 
   const standInicial = paramStand || savedStand || "ouros";
   aplicarTemaStand(standInicial);
@@ -401,12 +423,58 @@ document.addEventListener("DOMContentLoaded", () => {
     if (inputPin) {
       inputPin.value = pinInicial;
     }
-    realizarLogin(pinInicial).catch((err) => {
-      console.warn("Autenticação automática falhou:", err.message);
-      logout();
-      exibirErroLogin(`Falha na autenticação automática: ${err.message}`);
-    });
+
+    if (loadingView) loadingView.style.display = "flex";
+    loginView.style.display = "none";
+    activeView.style.display = "none";
+
+    let retryCount = 0;
+    const maxRetries = 3;
+
+    async function tentarAutoLogin() {
+      try {
+        await realizarLogin(pinInicial);
+      } catch (err) {
+        console.warn("Tentativa de auto-login falhou:", err);
+        if (err.isAuthError) {
+          // PIN foi alterado ou recusado expressamente pelo backend
+          logout();
+          exibirErroLogin(`PIN inválido ou alterado. Digite o novo PIN de acesso.`);
+        } else if (err.isNetworkError && retryCount < maxRetries) {
+          // Conexão temporariamente indisponível no celular (ex: alternância 4G/Wi-Fi): aguarda e tenta de novo
+          retryCount++;
+          setTimeout(tentarAutoLogin, 1500);
+        } else {
+          // Esgotou retentativas ou erro de servidor: abre formulário mantendo o PIN salvo no input
+          if (loadingView) loadingView.style.display = "none";
+          loginView.style.display = "flex";
+          exibirErroLogin(`Sem conexão no momento. Toque em "Gerar QR Code" para tentar novamente.`);
+        }
+      }
+    }
+
+    tentarAutoLogin();
   } else {
     loginView.style.display = "flex";
   }
+
+  // Monitora ciclo de vida no celular: reativação de aba, bloqueio/desbloqueio de tela
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
+      if (currentStand && currentPin) {
+        renovarTokenAutomaticamente();
+      } else {
+        const saved = localStorage.getItem("totem_pin") || sessionStorage.getItem("totem_pin");
+        if (saved && (!currentPin || (loginView && loginView.style.display === "flex"))) {
+          realizarLogin(saved).catch(() => {});
+        }
+      }
+    }
+  });
+
+  window.addEventListener("pageshow", () => {
+    if (currentStand && currentPin) {
+      renovarTokenAutomaticamente();
+    }
+  });
 });

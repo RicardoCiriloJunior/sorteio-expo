@@ -31,6 +31,17 @@
     <main class="checkin-main">
 
       <!-- ====================================================
+           TELA DE CARREGAMENTO / AUTO-LOGIN (TRANSIÇÃO SUAVE)
+           ==================================================== -->
+      <section id="totem-loading-view" class="totem-view-section" style="display: none;">
+        <div class="totem-status-pill">
+          <span class="totem-badge-dot"></span>
+          <span id="totem-loading-label">Conectando ao estande...</span>
+        </div>
+        <p class="checkin-subtitle" style="margin-top: 14px;">Gerando QR Code de acesso...</p>
+      </section>
+
+      <!-- ====================================================
            TELA 1: LOGIN DO ESTANDE (IDENTIFICAÇÃO AUTOMÁTICA)
            ==================================================== -->
       <section id="totem-login-view" class="totem-view-section" style="display: none;">

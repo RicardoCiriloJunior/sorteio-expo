@@ -195,6 +195,7 @@ function atualizarTextoTelefoneGanhador() {
   async function autenticarAdmin(key) {
     await carregarResumo(key);
     currentAdminKey = key;
+    localStorage.setItem("expo_admin_key", key);
     sessionStorage.setItem("expo_admin_key", key);
 
     loginView.style.display = "none";
@@ -356,6 +357,7 @@ function atualizarTextoTelefoneGanhador() {
   }
 
   function logout() {
+    localStorage.removeItem("expo_admin_key");
     sessionStorage.removeItem("expo_admin_key");
     currentAdminKey = null;
     currentWinner = null;
@@ -374,7 +376,7 @@ function atualizarTextoTelefoneGanhador() {
 
   const urlParams = new URLSearchParams(window.location.search);
   const paramKey = urlParams.get("key") || urlParams.get("admin_key");
-  const savedKey = sessionStorage.getItem("expo_admin_key");
+  const savedKey = localStorage.getItem("expo_admin_key") || sessionStorage.getItem("expo_admin_key");
   const initialKey = paramKey || savedKey;
 
   if (initialKey) {
