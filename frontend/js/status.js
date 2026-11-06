@@ -4,6 +4,59 @@ function getApiBaseUrl() {
 
 const API_BASE_URL = getApiBaseUrl();
 
+function formatarTelefone(valor) {
+  if (!valor) return "";
+  let digitos = valor.toString().replace(/\D/g, "");
+  if ((digitos.length === 12 || digitos.length === 13) && digitos.startsWith("55")) {
+    digitos = digitos.slice(2);
+  }
+  digitos = digitos.slice(0, 11);
+  if (digitos.length === 0) return "";
+  if (digitos.length <= 2) return `(${digitos}`;
+  if (digitos.length <= 6) return `(${digitos.slice(0, 2)}) ${digitos.slice(2)}`;
+  if (digitos.length <= 10) {
+    return `(${digitos.slice(0, 2)}) ${digitos.slice(2, 6)}-${digitos.slice(6)}`;
+  }
+  return `(${digitos.slice(0, 2)}) ${digitos.slice(2, 7)}-${digitos.slice(7)}`;
+}
+
+function getCookie(name) {
+  try {
+    const match = document.cookie.match(new RegExp("(?:^|;\\s*)" + name + "=([^;]*)"));
+    return match ? decodeURIComponent(match[1]) : null;
+  } catch (e) {
+    return null;
+  }
+}
+
+function setCookie(name, value, days = 30) {
+  try {
+    const expires = new Date(Date.now() + days * 864e5).toUTCString();
+    document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/; SameSite=Lax`;
+  } catch (e) {}
+}
+
+function storageGet(key) {
+  try {
+    const v = localStorage.getItem(key);
+    if (v && v !== "null" && v !== "undefined") return v;
+  } catch (e) {}
+  try {
+    const v = sessionStorage.getItem(key);
+    if (v && v !== "null" && v !== "undefined") return v;
+  } catch (e) {}
+  const cv = getCookie(key);
+  if (cv && cv !== "null" && cv !== "undefined") return cv;
+  return null;
+}
+
+function storageSet(key, value) {
+  if (!value) return;
+  try { localStorage.setItem(key, value); } catch (e) {}
+  try { sessionStorage.setItem(key, value); } catch (e) {}
+  setCookie(key, value);
+}
+
 const STAND_CARDS_META = {
   ouros: {
     slug: "ouros",
@@ -120,7 +173,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   atualizarBarraProgresso(0, false);
 
   const urlParams = new URLSearchParams(window.location.search);
-  const participanteId = urlParams.get("id") || localStorage.getItem("participante_id");
+  const participanteId = urlParams.get("id") || storageGet("participante_id");
   const demoVisits = urlParams.get("demo");
 
   if (demoVisits !== null) {
@@ -140,6 +193,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
+  storageSet("participante_id", participanteId);
+
   try {
     const response = await fetch(`${API_BASE_URL}/participantes/${participanteId}/status`);
     const data = await response.json();
@@ -148,6 +203,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     renderizarStands(data.stands);
     atualizarBarraProgresso(data.total_visitados, data.concluiu_todos);
+
+    if (data.nome) storageSet("participante_nome", data.nome);
+    if (data.telefone) storageSet("participante_telefone", formatarTelefone(data.telefone));
+    if (data.participante_id) storageSet("participante_id", data.participante_id);
 
     if (data.concluiu_todos) {
       exibirModalSucesso();
